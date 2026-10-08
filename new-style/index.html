@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="hy">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Պրոմ-Տեստ CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="home.css">
+  <style>
+    .up-date.is-ev {
+      background: var(--accent);
+      color: var(--accent-ink)
+    }
+
+    .up-when.late {
+      color: var(--bad)
+    }
+
+    .figures b.alert {
+      color: var(--bad)
+    }
+
+    .cta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: 520px
+    }
+
+    .cta a {
+      justify-content: center;
+      text-align: center
+    }
+
+    @media (max-width:420px) {
+      .cta {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .cta a.part,
+    .cta a.visit,
+    .cta a.event {
+      border-color: var(--accent);
+      color: var(--accent)
+    }
+
+    .cta a.part:hover,
+    .cta a.visit:hover,
+    .cta a.event:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent)
+    }
+
+    .cta a.visit::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex: none
+    }
+
+    .cta a.event::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      background: var(--accent);
+      flex: none
+    }
+
+    .cta a.part::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background: var(--accent);
+      transform: rotate(45deg);
+      flex: none
+    }
+
+    .up-date.is-part {
+      background: #b0b0d8;
+      color: #1b1b1f
+    }
+
+    /* company colours taken from the logos */
+    .up-list li.has-org {
+      grid-template-columns: 70px 1fr auto;
+      box-shadow: inset 4px 0 0 var(--org)
+    }
+
+    .up-list li.has-org .up-date {
+      background: var(--org);
+      color: #fff
+    }
+
+    .up-org {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--org)
+    }
+
+    .up-org::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      background: var(--org)
+    }
+
+    .up-logo {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 4px 6px;
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 40px
+    }
+
+    .up-logo img {
+      width: auto;
+      height: auto;
+      max-width: 62px;
+      max-height: 30px;
+      object-fit: contain;
+      display: block
+    }
+
+    @media (max-width:520px) {
+      .up-list li.has-org {
+        grid-template-columns: 60px 1fr
+      }
+
+      .up-logo {
+        display: none
+      }
+    }
+
+    .up-kind {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: var(--muted);
+      text-transform: uppercase
+    }
+  </style>
+</head>
+
+<body>
+  <div class="home">
+    <svg class="globe" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+        <circle cx="210" cy="190" r="62" />
+        <ellipse cx="210" cy="190" rx="24" ry="62" />
+        <ellipse cx="210" cy="190" rx="46" ry="62" />
+        <path d="M150 168 Q210 178 270 168" />
+        <path d="M148 190 H272" />
+        <path d="M150 212 Q210 202 270 212" />
+        <ellipse cx="200" cy="205" rx="168" ry="50" transform="rotate(-6 200 205)" />
+        <ellipse cx="200" cy="200" rx="150" ry="56" transform="rotate(38 200 200)" />
+      </g>
+      <g fill="currentColor">
+        <circle cx="44" cy="190" r="10" />
+        <circle cx="362" cy="214" r="10" />
+        <circle cx="285" cy="96" r="12" />
+        <circle cx="122" cy="300" r="12" />
+      </g>
+    </svg>
+    <div class="topbar">
+      <a class="brandmark" href="index.html">
+        <span class="chip-logo"><img src="logo.png" alt="Prom-Test Laboratories" width="790" height="265"></span>
+      </a>
+    </div>
+
+    <main class="hero">
+      <div class="hero-copy">
+        <!-- <div class="eyebrow">Պրոմ-Տեստ Լաբորատորիաներ</div> -->
+        <p class="lead"> Միջոցառումներ, մասնակցություններ և բժիշկների այցեր՝ մեկ օրացույցում</p>
+        <div class="cta">
+
+          <a class="visit" href="vizit.html">Այց</a>
+          <a class="event" href="mijocarum.html">Միջոցառում</a>
+          <a class="part" href="masnakcutyun.html">Մասնակցություն</a>
+          <a class="primary" href="general.html">Ընդհանուր</a>
+        </div>
+        <div class="figures" id="figures" hidden></div>
+      </div>
+
+      <section class="upcoming" aria-labelledby="upTitle">
+        <header>
+          <h2 id="upTitle">Առաջիկա միջոցառումներ և մասնակցություններ</h2><a href="general.html">Բոլորը →</a>
+        </header>
+        <ul class="up-list" id="upList">
+          <li class="up-empty" style="display:block">Առաջիկա միջոցառումներ և մասնակցություններ չկան։</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="orgs" id="orgs">
+      <div class="orgs-in"><span></span>
+        <ul id="orgList"></ul>
+      </div>
+    </footer>
+  </div>
+
+  <script src="masnakcutyun-data.js"></script>
+  <script>
+    (function () {
+      var MS = ["հնվ", "փտր", "մրտ", "ապր", "մյս", "հնս", "հլս", "օգս", "սեպ", "հոկ", "նոյ", "դեկ"];
+      var LOGOS = [["Prom-Test", "logo.png"], ["Diagnostica", "logos/diagnostica.png"], ["PetCT", "logos/petct.png"], ["Proftest", "logos/proftest.png"], ["Cell Therapy Center", "logos/celltherapy.png"]];
+      function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e }
+      function day(s) { var p = String(s || "").split("-"); return p.length === 3 ? new Date(+p[0], p[1] - 1, +p[2]) : null }
+      function arr(v) { return Array.isArray(v) ? v : String(v || "").split(/\s*[,;]\s*/).filter(Boolean) }
+      var all = []; try { all = JSON.parse(localStorage.getItem("promtest-visits-v1") || "[]") } catch (e) { }
+      var t = new Date(); t.setHours(0, 0, 0, 0);
+      var open = all.filter(function (v) { return v.status !== "done" });
+      var isEv = function (v) { return v.kind === "event" };
+      var part = []; try { part = JSON.parse(localStorage.getItem("promtest-events-v1") || "[]") } catch (e) { }
+      if (!part.length && window.SEED_EVENTS) part = window.SEED_EVENTS;
+      part = part.filter(function (e) { var x = day(e.end) || day(e.start); return x && x >= t }).map(function (e) { return { kind: "part", date: e.start, time: e.time, ename: e.name, clinic: e.location, etype: e.format, rep: e.responsible, org: e.org } });
+      var ORGS = {
+        "Prom-Test": { c: "#765999", logo: "logo.png" },
+        "Diagnostica": { c: "#233a6a", logo: "logos/diagnostica.png" },
+        "PetCT": { c: "#4a6fa5", logo: "logos/petct.png" },
+        "Proftest": { c: "#0a72c0", logo: "logos/proftest.png" },
+        "Cell Therapy Center": { c: "#167a8b", logo: "logos/celltherapy.png" }
+      };
+      var isPart = function (v) { return v.kind === "part" };
+      var up = open.concat(part).filter(function (v) { var x = day(v.date); return x && (x >= t || isPart(v)) }).sort(function (a, b) { return ((a.date || "") + (a.time || "")).localeCompare((b.date || "") + (b.time || "")) });
+      var late = open.filter(function (v) { var x = day(v.date); return x && x < t && !isEv(v) }).length;
+
+      if (all.length || part.length) {
+        var f = document.getElementById("figures");
+        [[up.filter(function (v) { return !isEv(v) && !isPart(v) }).length, "Առաջիկա այցեր"], [up.filter(isEv).length, "Առաջիկա միջոցառումներ"], [part.length, "Մասնակցություն"]].forEach(function (p, i) {
+          var d = el("div"); var b = el("b", null, p[0]); d.appendChild(b); d.appendChild(document.createTextNode(p[1])); f.appendChild(d)
+        });
+        f.hidden = false;
+      }
+      var right = up.filter(function (v) { return isEv(v) || isPart(v) });
+      if (right.length) {
+        var ul = document.getElementById("upList"); ul.textContent = "";
+        right.slice(0, 3).forEach(function (v) {
+          var s = day(v.date), li = el("li"), dt = el("div", "up-date" + (isPart(v) ? " is-part" : isEv(v) ? " is-ev" : "")), body = el("div", "up-body");
+          dt.appendChild(el("b", null, s.getDate())); dt.appendChild(el("span", null, MS[s.getMonth()] + (v.time ? " · " + v.time : "")));
+          var n = Math.round((s - t) / 864e5);
+          body.appendChild(el("div", "up-kind", isPart(v) ? "Մասնակցություն" : "Միջոցառում"));
+          var org = v.org && ORGS[v.org];
+          if (v.org) {
+            li.className = "has-org"; li.style.setProperty("--org", org ? org.c : "var(--accent)");
+            body.appendChild(el("div", "up-org", v.org));
+          }
+          body.appendChild(el("div", "up-name", (isEv(v) || isPart(v)) ? (v.ename || v.etype || "Միջոցառում") : (v.clinic || "Այց")));
+          var meta = ((isEv(v) || isPart(v)) ? [v.etype, v.clinic, v.rep] : [v.rep, arr(v.tests).slice(0, 3).join(", ")]).filter(Boolean).join(" · ");
+          if (meta) body.appendChild(el("div", "up-meta", meta));
+          body.appendChild(el("div", "up-when", n < 0 ? "Ընթացքում է" : n === 0 ? "Այսօր" : n === 1 ? "Վաղը" : n + " օր հետո"));
+          li.appendChild(dt); li.appendChild(body); li.style.cursor = "pointer";
+          if (org) { var lg = el("div", "up-logo"), im = new Image(); im.src = org.logo; im.alt = v.org; im.onerror = function () { lg.remove() }; lg.appendChild(im); li.appendChild(lg) }
+          li.onclick = function () { location.href = isPart(v) ? "masnakcutyun.html" : isEv(v) ? "mijocarum.html" : "vizit.html" };
+          ul.appendChild(li);
+        });
+      }
+      var ol = document.getElementById("orgList");
+      LOGOS.forEach(function (o) {
+        var li = el("li", "has-logo"), img = new Image(); img.src = o[1]; img.alt = o[0]; img.title = o[0]; img.className = "org-logo";
+        img.onerror = function () { li.remove() }; li.appendChild(img); ol.appendChild(li)
+      });
+    })();
+  </script>
+</body>
+
+</html>

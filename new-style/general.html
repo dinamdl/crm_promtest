@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="hy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prom-Test ընդհանուր</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+/* Ընդհանուր: 7-day board starting today — visits, CRM events and participation side by side */
+:root{--k-visit:#2f7d8c;--k-visit-soft:#e0f0f2;--k-part:#b0b0d8;--k-part-soft:#eeeef8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--k-visit:#6cc3d1;--k-visit-soft:#163037;--k-part:#b0b0d8;--k-part-soft:#26263a}}
+:root[data-theme="dark"]{--k-visit:#6cc3d1;--k-visit-soft:#163037;--k-part:#b0b0d8;--k-part-soft:#26263a}
+.wrap{max-width:1280px}
+.btn{display:inline-flex;align-items:center;font-size:14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;text-decoration:none}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.it{text-decoration:none}
+.btn.nav{gap:8px;font-weight:600;border-color:var(--accent);color:var(--accent);padding:9px 16px;border-radius:10px}
+.btn.nav:hover{background:var(--accent-soft)}
+.btn.nav::before{content:"";width:9px;height:9px;background:var(--accent);flex:none}
+.btn.nav.visit::before{border-radius:50%}
+.btn.nav.event::before{border-radius:2px}
+.btn.nav.part::before{transform:rotate(45deg)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lg{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;cursor:pointer}
+.lg[aria-pressed=true]{border-color:var(--mark);background:var(--mark);color:var(--mark-ink);font-weight:600}
+.lg[aria-pressed=true] em{color:var(--mark-ink);opacity:.75}
+.k-all i{background:linear-gradient(135deg,var(--k-visit) 0 33%,var(--accent) 33% 66%,var(--k-part) 66%)}
+.lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.lg em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums}
+.k-visit i{background:var(--k-visit)} .k-event i{background:var(--accent)} .k-part i{background:var(--k-part)}
+.people{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.people .lbl{font-size:12.5px;color:var(--muted);margin-right:2px}
+.rep{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;cursor:pointer;color:var(--ink)}
+.rep[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.rep em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums}
+.av{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-weight:700;color:#fff;flex:none}
+.it .who{display:inline-flex;align-items:center;gap:5px}
+.it .org{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--org);margin-top:2px}
+.it .org i{width:8px;height:8px;border-radius:2px;background:var(--org);flex:none}
+.it .org img{height:16px;width:auto;max-width:56px;object-fit:contain;background:#fff;border-radius:3px;padding:1px 2px}
+.it.has-org{border-left-color:var(--org)!important}
+.it .who .av{width:16px;height:16px;font-size:8.5px}
+.weeknav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.weeknav h2{font-family:var(--f-display);font-size:19px;margin:0}
+.weeknav .btns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dates{display:flex;flex-wrap:wrap;gap:8px;align-items:end}
+.dates label{display:grid;gap:3px;font-size:12px;color:var(--muted)}
+.dates input,.dates select{width:auto;min-width:150px;padding:7px 10px}
+.dates .date-in{width:150px;font-variant-numeric:tabular-nums}
+.dates #people{min-width:210px}
+.dates .seg button{padding:7px 12px}
+.dates .err{font-size:12.5px;color:var(--bad);align-self:center}
+.board{display:grid;gap:18px}
+:root{--k-event:var(--accent)}
+.dayrow{display:grid;gap:8px}
+.dayrow h3{margin:0;display:flex;align-items:baseline;gap:10px;font-family:var(--f-display);font-size:16px}
+.dayrow h3 span{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.dayrow h3 small{font-family:var(--f-body);font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:1px 8px;align-self:center}
+.dayrow h3 em{margin-left:auto;font-style:normal;font-family:var(--f-body);font-size:12px;color:var(--muted)}
+.dayrow.today h3 b{color:var(--accent)}
+.row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--org);border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--ink)}
+.row:hover{border-color:var(--muted);border-left-color:var(--org)}
+.row.done{opacity:.6}
+.r-time{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted);text-align:center;border-right:1px solid var(--line);padding-right:12px}
+.r-body{display:grid;gap:2px;min-width:0}
+.r-top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+.multi{font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:1px 8px}
+.row .k{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.row.visit .k{color:var(--k-visit)} .row.event .k{color:var(--accent)} .row.part .k{color:var(--muted)}
+.row .t{font-size:15px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.r-meta{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:12.5px;color:var(--muted)}
+.r-meta .who{display:inline-flex;align-items:center;gap:6px}
+.r-meta .av{width:18px;height:18px;font-size:9px}
+.row .org{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--org)}
+.row .org img{display:none}
+.row .org i{width:8px;height:8px;border-radius:2px;background:var(--org)}
+.r-logo{background:#fff;border:1px solid var(--line);border-radius:8px;width:84px;height:40px;display:grid;place-items:center;padding:4px 6px}
+.r-logo img{max-width:70px;max-height:30px;width:auto;height:auto;object-fit:contain}
+@media (max-width:560px){.row{grid-template-columns:48px minmax(0,1fr)}.r-logo{display:none}}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0;display:flex;flex-direction:column;min-height:260px}
+.col.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.col.we{background:color-mix(in srgb,var(--surface) 70%,var(--bg))}
+.ch{padding:10px 12px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 6px}
+.ch b{grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch b{font-family:var(--f-display);font-size:15px}
+.ch span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.col.today .ch b{color:var(--accent)}
+.ch small{font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:1px 7px}
+.items{padding:8px;display:grid;gap:6px;align-content:start;flex:1}
+.it{display:grid;gap:2px;text-align:left;width:100%;padding:8px 9px;border-radius:8px;border:1px solid transparent;border-left:3px solid;font:inherit;cursor:pointer;color:var(--ink)}
+.it:hover{border-color:var(--muted)}
+.it.visit{background:var(--k-visit-soft);border-left-color:var(--k-visit)}
+.it.event{background:var(--accent-soft);border-left-color:var(--accent)}
+.it.part{background:var(--k-part-soft);border-left-color:var(--k-part)}
+.it.done{opacity:.6}
+.it .k{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.it.visit .k{color:var(--k-visit)} .it.event .k{color:var(--accent)} .it.part .k{color:var(--muted)}
+.it .t{font-size:13px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.it .m{font-size:11.5px;color:var(--muted);line-height:1.35;overflow-wrap:anywhere}
+.none{font-size:12px;color:var(--past);text-align:center;padding:14px 4px}
+.add{margin:0 8px 8px;padding:6px;border:1px dashed var(--line);border-radius:8px;background:none;color:var(--muted);font-size:12.5px}
+.add:hover{border-color:var(--accent);color:var(--accent)}
+.addmenu{display:grid;gap:4px;margin:0 8px 8px}
+.addmenu a{font-size:12.5px;text-decoration:none;color:var(--ink);padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
+.addmenu a:hover{border-color:var(--accent);color:var(--accent)}
+/* ---- header redesign: hero card (logo motifs) + stat tiles + filter panel ---- */
+.hero-head{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px 20px 32px;display:grid;gap:20px;box-shadow:0 18px 48px rgb(60 30 100 / .08)}
+.hero-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--accent)}
+.hero-head::after{content:"";position:absolute;right:-20px;bottom:-30px;width:320px;height:200px;pointer-events:none;
+  background-image:radial-gradient(circle,var(--line) 1.5px,transparent 1.7px);background-size:14px 14px;
+  -webkit-mask-image:radial-gradient(ellipse at 70% 70%,#000 15%,transparent 65%);mask-image:radial-gradient(ellipse at 70% 70%,#000 15%,transparent 65%)}
+.hh-globe{position:absolute;top:-120px;right:-80px;width:380px;height:auto;color:var(--accent);opacity:.09;pointer-events:none}
+.hero-head > *{position:relative;z-index:1}
+.hero-head > .hh-globe{position:absolute;z-index:0}
+.hero-head header{align-items:flex-start}
+.hero-head .brand{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);border-radius:999px;padding:3px 12px;margin-bottom:10px}
+.hero-head h1{font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;display:flex;align-items:center;gap:12px}
+.hero-head h1::before{content:"";width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,var(--k-visit) 0 33%,var(--accent) 33% 66%,var(--k-part) 66%);flex:none}
+.hero-head .sub{margin-top:8px}
+.hero-head .actions{align-self:center}
+.legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.lg{display:grid;gap:2px;justify-items:start;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:var(--ink);font:inherit;position:relative;overflow:hidden}
+.lg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--c,var(--accent))}
+.lg em{font-style:normal;font-size:28px;font-weight:800;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+.lg span{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
+.lg:hover{border-color:var(--c,var(--accent))}
+.lg[aria-pressed=true]{background:var(--surface);border-color:var(--c,var(--accent));box-shadow:0 0 0 1px var(--c,var(--accent));color:var(--ink);font-weight:400}
+.lg[aria-pressed=true] em{color:var(--c,var(--accent));opacity:1}
+.lg[aria-pressed=true] span{color:var(--ink);font-weight:600}
+.k-all{--c:var(--accent)} .k-visit{--c:var(--k-visit)} .k-event{--c:var(--accent)} .k-part{--c:#8f8fc4}
+.k-all::after{background:linear-gradient(90deg,var(--k-visit) 0 33%,var(--accent) 33% 66%,var(--k-part) 66%)}
+@media (max-width:640px){.legend{grid-template-columns:repeat(2,minmax(0,1fr))}.hh-globe{width:260px;top:-90px;right:-90px}}
+.fpanel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.weeknav{margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero-head">
+  <svg class="hh-globe" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <circle cx="210" cy="190" r="62"/><ellipse cx="210" cy="190" rx="24" ry="62"/><ellipse cx="210" cy="190" rx="46" ry="62"/>
+      <path d="M150 168 Q210 178 270 168"/><path d="M148 190 H272"/><path d="M150 212 Q210 202 270 212"/>
+      <ellipse cx="200" cy="205" rx="168" ry="50" transform="rotate(-6 200 205)"/><ellipse cx="200" cy="200" rx="150" ry="56" transform="rotate(38 200 200)"/>
+    </g>
+    <g fill="currentColor"><circle cx="44" cy="190" r="10"/><circle cx="362" cy="214" r="10"/><circle cx="285" cy="96" r="12"/><circle cx="122" cy="300" r="12"/></g>
+  </svg>
+  <header>
+    <div>
+      <a class="brand" href="index.html">← Հետ</a>
+      <h1>Ընդհանուր</h1>
+      <p class="sub" id="todayLine">Այցեր, միջոցառումներ և մասնակցություն՝ ըստ օրերի</p>
+    </div>
+    <div class="actions">
+      <a class="btn nav visit" href="vizit.html">Այց</a>
+      <a class="btn nav event" href="mijocarum.html">Միջոցառում</a>
+      <a class="btn nav part" href="masnakcutyun.html">Մասնակցություն</a>
+    </div>
+  </header>
+
+  <div class="legend" id="legend" role="group" aria-label="Ցույց տալ"></div>
+  </section>
+
+  <div class="dates fpanel">
+    <label>Աշխատակից<select id="people"></select></label>
+    <label>Սկսած<input id="dFrom" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off"></label>
+    <label>Մինչև<input id="dTo" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off"></label>
+    <label>Ժամանակահատված<select id="period">
+      <option value="7">7 օր</option>
+      <option value="14">14 օր</option>
+      <option value="30">30 օր</option>
+      <option value="custom" hidden>Ընտրված ամսաթվեր</option>
+    </select></label>
+    <span class="err" id="dErr" hidden></span>
+  </div>
+
+  <div class="weeknav">
+    <h2 id="range">—</h2>
+    <div class="btns">
+      <button type="button" id="prev" aria-label="Նախորդ ժամանակահատվածը">‹</button>
+      <button type="button" id="today">Այսօր</button>
+      <button type="button" id="next" aria-label="Հաջորդ ժամանակահատվածը">›</button>
+    </div>
+  </div>
+
+  <main class="board" id="board"></main>
+</div>
+
+<script src="masnakcutyun-data.js"></script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const WD=["Կիրակի","Երկուշաբթի","Երեքշաբթի","Չորեքշաբթի","Հինգշաբթի","Ուրբաթ","Շաբաթ"];
+  const MS=["հնվ","փտր","մրտ","ապր","մյս","հնս","հլս","օգս","սեպ","հոկ","նոյ","դեկ"];
+  const KIND={visit:"Այց",event:"Միջոցառում",part:"Մասնակցություն"};
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const arr=v=>Array.isArray(v)?v:String(v||"").split(/\s*[,;]\s*/).filter(Boolean);
+  const iso=x=>x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  const day=s=>{const p=String(s||"").split("-");return p.length===3?new Date(+p[0],p[1]-1,+p[2]):null};
+  const TODAY=new Date(); TODAY.setHours(0,0,0,0);
+  let start=new Date(TODAY), len=30, kindF="", who="";
+  try{const n=+localStorage.getItem("promtest-general-len"); if([7,14,30].includes(n))len=n}catch(e){}
+  const show=new Proxy({},{get:(_,k)=>!kindF||kindF===k});
+  try{who=localStorage.getItem("promtest-general-who")||""}catch(e){}
+  const AVC=["#765999","#2f7d8c","#b0604a","#4f7a3a","#8a5a9e","#3e5fa8","#9a6b1f","#a24d74"];
+  const initials=n=>String(n||"?").replace(/[^\p{L}\s]/gu,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2)||"?";
+  let REPS=[]; try{const l=JSON.parse(localStorage.getItem("promtest-crm-lists-v1")||"null"); if(l&&Array.isArray(l.reps))REPS=l.reps}catch(e){}
+  if(!REPS.length)REPS=["Արմինե","Լուսինե","Աննա","Աննա Շ.","Անահիտ","Սիրուշ","Վարդան"];
+  const avColor=n=>{const i=REPS.indexOf(n); let h=0; for(const c of String(n))h=(h*31+c.charCodeAt(0))>>>0; return AVC[(i>=0?i:h)%AVC.length]};
+  const av=n=>`<span class="av" style="background:${avColor(n)}" aria-hidden="true">${esc(initials(n))}</span>`;
+  try{kindF=localStorage.getItem("promtest-general-kind")||""}catch(e){}
+
+  // gather all three sources
+  let crm=[], part=[];
+  try{crm=JSON.parse(localStorage.getItem("promtest-visits-v1")||"[]")}catch(e){}
+  try{part=JSON.parse(localStorage.getItem("promtest-events-v1")||"[]")}catch(e){}
+  if(!part.length&&window.SEED_EVENTS)part=window.SEED_EVENTS;
+  const items=[];
+  crm.forEach(v=>{ if(!v.date)return; const k=v.kind==="event"?"event":"visit";
+    items.push({kind:k,from:v.date,to:v.date,time:v.time||"",done:v.status==="done",
+      title:k==="event"?(v.ename||v.etype||"Միջոցառում"):(v.clinic||"Այց"),
+      meta:(k==="event"?[v.etype,v.clinic]:[arr(v.tests).slice(0,3).join(", ")]).filter(Boolean).join(" · "),
+      person:v.rep||"",org:k==="event"?(v.org||""):"",href:k==="event"?"mijocarum.html":"vizit.html"}) });
+  part.forEach(e=>{ if(!e.start)return;
+    items.push({kind:"part",from:e.start,to:e.end||e.start,time:e.time||"",done:false,
+      title:e.name||"Միջոցառում",meta:[e.location,e.format].filter(Boolean).join(" · "),person:e.responsible||"",org:e.org||"",href:"masnakcutyun.html"}) });
+  const ORGS={"Prom-Test":{c:"#765999",logo:"logo.png"},"Diagnostica":{c:"#233a6a",logo:"logos/diagnostica.png"},"PetCT":{c:"#4a6fa5",logo:"logos/petct.png"},"Proftest":{c:"#0a72c0",logo:"logos/proftest.png"},"Cell Therapy Center":{c:"#167a8b",logo:"logos/celltherapy.png"}};
+  const orgTag=i=>{ if(!i.org)return ""; const o=ORGS[i.org];
+    return `<span class="org"><i></i>${esc(i.org)}</span>` };
+  const PEOPLE=[...new Set([...REPS,...items.map(i=>i.person).filter(Boolean)])];
+  if(who&&!PEOPLE.includes(who))who="";
+  const mine=i=>!who||i.person===who;
+
+  function legend(){
+    const cnt={visit:0,event:0,part:0}; const a=iso(start), b=iso(new Date(start.getFullYear(),start.getMonth(),start.getDate()+len-1));
+    const pc={}; items.forEach(i=>{if(i.to>=a&&i.from<=b){ if(mine(i))cnt[i.kind]++; if(show[i.kind]&&i.person)pc[i.person]=(pc[i.person]||0)+1 }});
+    $("people").innerHTML='<option value="">Բոլոր աշխատակիցները</option>'+
+      PEOPLE.map(n=>`<option value="${esc(n)}"${who===n?" selected":""}>${esc(n)} (${pc[n]||0})</option>`).join("");
+    $("legend").innerHTML=`<button type="button" class="lg k-all" data-k="" aria-pressed="${!kindF}"><em>${cnt.visit+cnt.event+cnt.part}</em><span><i></i>Բոլորը</span></button>`+
+      Object.keys(KIND).map(k=>`<button type="button" class="lg k-${k}" data-k="${k}" aria-pressed="${kindF===k}"><em>${cnt[k]}</em><span><i></i>${KIND[k]}</span></button>`).join("");
+  }
+  function render(){
+    const days=[...Array(len)].map((_,i)=>new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));
+    const f=days[0], l=days[len-1];
+    $("dFrom").value=dmy(iso(f)); $("dTo").value=dmy(iso(l));
+    $("period").value=[7,14,30].includes(len)?String(len):"custom";
+    $("range").textContent=f.getDate()+" "+MS[f.getMonth()]+" – "+l.getDate()+" "+MS[l.getMonth()]+" "+l.getFullYear();
+    legend();
+    let html="", any=false;
+    days.forEach(d=>{
+      const k=iso(d), wd=d.getDay(), isT=+d===+TODAY;
+      const list=items.filter(i=>show[i.kind]&&mine(i)&&i.from<=k&&i.to>=k).sort((a,b)=>(a.time||"99").localeCompare(b.time||"99"));
+      if(!list.length&&!isT)return;
+      any=any||list.length>0;
+      const rows=list.map(i=>`<a class="row ${i.kind}${i.done?" done":""}" href="${i.href}" style="--org:${i.org?(ORGS[i.org]||{c:"var(--accent)"}).c:"var(--k-"+i.kind+")"}">
+          <span class="r-time">${i.time?esc(i.time):"—"}</span>
+          <span class="r-body">
+            <span class="r-top"><span class="k">${KIND[i.kind]}</span>${orgTag(i)}${i.from!==i.to?`<span class="multi">${(n=>n===1?"1-ին":n+"-րդ")(Math.round((day(k)-day(i.from))/864e5)+1)} օր՝ ${Math.round((day(i.to)-day(i.from))/864e5)+1}-ից</span>`:""}</span>
+            <span class="t">${esc(i.title)}</span>
+            <span class="r-meta">${i.meta?`<span>${esc(i.meta)}</span>`:""}${i.person?`<span class="who">${av(i.person)}${esc(i.person)}</span>`:""}</span>
+          </span>
+          ${i.org&&ORGS[i.org]?`<span class="r-logo"><img src="${ORGS[i.org].logo}" alt="${esc(i.org)}" onerror="this.parentNode.remove()"></span>`:""}</a>`).join("");
+      html+=`<section class="dayrow${isT?" today":""}${wd===0||wd===6?" we":""}">
+        <h3><b>${WD[wd]}</b><span>${d.getDate()} ${MS[d.getMonth()]}</span>${isT?"<small>Այսօր</small>":""}<em>${list.length?list.length:""}</em></h3>
+        ${rows||'<div class="none">Այսօր ոչինչ նախատեսված չէ</div>'}</section>`;
+    });
+    if(!any)html+='<div class="empty"><strong>Այս ժամանակահատվածում ոչինչ չկա</strong>Փոխեք ամսաթվերը, աշխատակցին կամ տեսակը։</div>';
+    $("board").innerHTML=html;
+  }
+  $("legend").addEventListener("click",e=>{const b=e.target.closest(".lg"); if(!b)return; kindF=b.dataset.k;
+    try{localStorage.setItem("promtest-general-kind",kindF)}catch(err){} render()});
+  $("people").addEventListener("change",e=>{who=e.target.value;
+    try{localStorage.setItem("promtest-general-who",who)}catch(err){} render()});
+  $("prev").onclick=()=>{start.setDate(start.getDate()-len);render()};
+  $("next").onclick=()=>{start.setDate(start.getDate()+len);render()};
+  $("today").onclick=()=>{start=new Date(TODAY);render()};
+  function err(t){$("dErr").textContent=t||""; $("dErr").hidden=!t}
+  function fromInputs(changed){
+    const a=day(parseDMY($("dFrom").value)), b=day(parseDMY($("dTo").value));
+    if(!a){err("Ընտրեք սկզբի ամսաթիվը");return}
+    if(changed==="from"&&(!b||b<a)){start=a;err("");render();return}
+    if(!b){err("Ընտրեք ավարտի ամսաթիվը");return}
+    if(b<a){err("«Մինչև»-ն չի կարող լինել «Սկսած»-ից շուտ");return}
+    const n=Math.round((b-a)/864e5)+1;
+    if(n>62){err("Ընտրեք առավելագույնը 62 օր");return}
+    err(""); start=a; len=n; render();
+  }
+  /* dates as օր.ամիս.տարի (day.month.year) with an Armenian calendar dropdown */
+  function dmy(s){const p=String(s||"").split("-");return p.length===3?p[2]+"."+p[1]+"."+p[0]:""}
+  function parseDMY(t){const m=String(t||"").trim().match(/^(\d{1,2})[.\/\-\s](\d{1,2})[.\/\-\s](\d{4})$/); if(!m)return "";
+    const x=new Date(+m[3],m[2]-1,+m[1]); return x.getDate()===+m[1]&&x.getMonth()===m[2]-1?iso(x):""}
+  const MF=["Հունվար","Փետրվար","Մարտ","Ապրիլ","Մայիս","Հունիս","Հուլիս","Օգոստոս","Սեպտեմբեր","Հոկտեմբեր","Նոյեմբեր","Դեկտեմբեր"], WS=["Երկ","Երք","Չրք","Հնգ","Ուրբ","Շբթ","Կիր"];
+  let dp=null;
+  function closeDP(){const x=document.getElementById("dp"); if(x)x.remove(); dp=null}
+  function openDP(inp){ if(dp&&dp.inp===inp)return; closeDP(); const b=day(parseDMY(inp.value))||new Date(TODAY);
+    dp={inp,y:b.getFullYear(),m:b.getMonth()}; const pop=document.createElement("div"); pop.className="dp"; pop.id="dp"; inp.parentNode.appendChild(pop); drawDP()}
+  function drawDP(){const pop=document.getElementById("dp"); if(!pop)return; const sel=parseDMY(dp.inp.value), t=iso(TODAY);
+    const off=(new Date(dp.y,dp.m,1).getDay()+6)%7, n=new Date(dp.y,dp.m+1,0).getDate(); let c=""; for(let i=0;i<off;i++)c+="<span></span>";
+    for(let d=1;d<=n;d++){const k=iso(new Date(dp.y,dp.m,d)); c+=`<button type="button" class="dp-d${k===sel?" sel":""}${k===t?" today":""}" data-iso="${k}">${d}</button>`}
+    pop.innerHTML=`<div class="dp-h"><button type="button" class="dp-nav" data-nav="-1">‹</button><b>${MF[dp.m]} ${dp.y}</b><button type="button" class="dp-nav" data-nav="1">›</button></div><div class="dp-g">${WS.map(w=>`<i>${w}</i>`).join("")}${c}</div><div class="dp-f"><button type="button" data-act="today">Այսօր</button></div>`}
+  document.addEventListener("focusin",e=>{if(e.target.classList&&e.target.classList.contains("date-in"))openDP(e.target)});
+  document.addEventListener("click",e=>{ const inp=e.target.closest&&e.target.closest(".date-in"); if(inp){openDP(inp);return}
+    const b=e.target.closest&&e.target.closest(".dp button"); if(!b){ if(dp&&!(e.target.closest&&e.target.closest(".dp")))closeDP(); return }
+    e.preventDefault(); if(b.dataset.nav){dp.m+=+b.dataset.nav; if(dp.m<0){dp.m=11;dp.y--} if(dp.m>11){dp.m=0;dp.y++} drawDP(); return}
+    const inp2=dp.inp; inp2.value=dmy(b.dataset.iso||iso(TODAY)); closeDP(); inp2.dispatchEvent(new Event("change"))});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDP()});
+  $("dFrom").addEventListener("change",()=>fromInputs("from"));
+  $("dTo").addEventListener("change",()=>fromInputs("to"));
+  $("period").addEventListener("change",e=>{if(e.target.value==="custom")return; len=+e.target.value; try{localStorage.setItem("promtest-general-len",len)}catch(err){} err(""); render()});
+  (function(){const t=new Date(); $("todayLine").textContent="Այսօր՝ "+WD[t.getDay()]+", "+t.getDate()+" "+["հունվարի","փետրվարի","մարտի","ապրիլի","մայիսի","հունիսի","հուլիսի","օգոստոսի","սեպտեմբերի","հոկտեմբերի","նոյեմբերի","դեկտեմբերի"][t.getMonth()]+" "+t.getFullYear()+" · այցեր, միջոցառումներ և մասնակցություն՝ ըստ օրերի";})();
+  render();
+})();
+</script>
+</body>
+</html>

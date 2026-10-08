@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="hy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prom-Test մասնակցություն</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="masnakcutyun.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <a class="brand" href="index.html">← Հետ</a>
+      <div class="mode" id="mode">Բեռնվում է…</div>
+      <h1>Մասնակցություն</h1>
+      <p class="sub">Հովանավորվող կոնֆերանսներ, պատասխանատուներ և տպագրական նյութեր</p>
+    </div>
+    <div class="actions">
+      <button id="listsBtn" type="button">Ցուցակներ</button>
+      <button id="exportBtn" type="button">Արտահանել CSV</button>
+      <button id="addBtn" class="primary" type="button">Մասնակցություն</button>
+    </div>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Ամփոփում"></section>
+  <div class="reps" id="reps" role="group" aria-label="Աշխատակիցներ"></div>
+
+  <div class="toolbar">
+    <input id="q" type="hidden" value=""><!-- որոնումը հանված է -->
+    <div class="seg" role="group" aria-label="Կարգավիճակ">
+      <button type="button" data-f="upcoming" aria-pressed="true">Առաջիկա</button>
+      <button type="button" data-f="past" aria-pressed="false">Անցած</button>
+      <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
+    </div>
+    <select id="person" aria-label="Պատասխանատու"><option value="">Բոլոր պատասխանատուները</option></select>
+  </div>
+
+  <section class="cal" id="cal" aria-label="Օրացույց">
+    <div class="cal-h">
+      <h2 id="calTitle">—</h2>
+      <p class="hint">Սեղմեք օրվա վրա՝ նոր մասնակցություն ավելացնելու, կամ միջոցառման վրա՝ բացելու համար</p>
+      <div class="cal-nav"><button type="button" id="calPrev" aria-label="Նախորդ ամիս">‹</button><button type="button" id="calToday">Այսօր</button><button type="button" id="calNext" aria-label="Հաջորդ ամիս">›</button></div>
+    </div>
+    <div class="cal-g" id="calGrid"></div>
+  </section>
+
+  <h2 class="listhead">Մասնակցությունների ցուցակ</h2>
+  <main id="list"></main>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <form class="panel" id="form" novalidate>
+    <div class="row"><h3 id="formTitle">Նոր միջոցառում</h3><button type="button" id="closeBtn" aria-label="Փակել">✕</button></div>
+    <label>Միջոցառման անվանում *<input id="f_name" required></label>
+    <div class="grid2">
+      <label>Սկիզբ *<input id="f_start" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off" required></label>
+      <label>Ավարտ (եթե մի քանի օր է)<input id="f_end" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off"></label>
+      <label>Ժամ<input id="f_time" placeholder="օր.՝ 10:00"></label>
+      <label>Գրանցման ամսաթիվ<input id="f_reg" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off"></label>
+      <label>Կազմակերպություն<select id="f_org"></select></label>
+      <label>Ներկայացման ձևաչափ<select id="f_format"></select></label>
+      <label>Վայր<input id="f_location" autocomplete="off" placeholder="Գրեք վայրը"></label>
+      <label>Պատասխանատու<select id="f_resp"></select></label>
+    </div>
+    <label>Թիրախային լսարան<textarea id="f_aud" rows="1"></textarea></label>
+    <div class="field msel-wrap"><span id="matLbl">Տպագրական նյութեր</span><button type="button" id="f_matBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false" aria-labelledby="matLbl f_matBtn">— Ընտրել —</button><div id="f_mat" class="checks msel-pop" role="group" aria-labelledby="matLbl" hidden></div></div>
+    <label>Նշումներ<textarea id="f_notes" rows="3"></textarea></label>
+    <div id="confirmBox" class="confirm" hidden>Ջնջե՞լ այս միջոցառումը։ <button type="button" id="yesDel" class="danger">Այո, ջնջել</button><button type="button" id="noDel">Չեղարկել</button></div>
+    <div class="row">
+      <button type="button" id="delBtn" class="danger" hidden>Ջնջել</button>
+      <span></span>
+      <div class="actions"><button type="button" id="cancelBtn">Չեղարկել</button><button type="submit" id="saveBtn" class="primary">Պահպանել</button></div>
+    </div>
+  </form>
+</div>
+<div class="overlay" id="listsOverlay" hidden>
+  <div class="panel" role="dialog" aria-labelledby="listsTitle">
+    <div class="row"><h3 id="listsTitle">Ցուցակներ</h3><button type="button" id="listsClose" aria-label="Փակել">✕</button></div>
+    <p class="hint">Այս անունները հայտնվում են միջոցառման ձևում՝ ընտրելու համար։ Փոփոխությունները պահպանվում են անմիջապես։</p>
+    <div id="listsBody" style="display:grid;gap:16px"></div>
+    <button type="button" id="harvestBtn">Ավելացնել միջոցառումներում արդեն օգտագործված անունները</button>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="masnakcutyun-data.js"></script>
+<script src="masnakcutyun.js"></script>
+</body>
+</html>

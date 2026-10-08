@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="hy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prom-Test այցեր</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="vizit.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <a class="brand" href="index.html">← Հետ</a>
+      <!-- <div class="mode" id="mode">Բեռնվում է…</div> -->
+      <h1>Այցեր</h1>
+      <p class="sub" id="subline">Բժիշկների և կլինիկաների այցեր, պայմանավորվածություններ և առարկություններ</p>
+    </div>
+    <div class="actions">
+      <button id="listsBtn" type="button">Ցուցակներ</button>
+      <button id="exportBtn" type="button">Արտահանել CSV</button>
+      <button id="addBtn" class="primary" type="button">Նոր այց</button>
+    </div>
+  </header>
+
+
+  <section class="summary" id="summary" aria-label="Ամփոփում"></section>
+  <div class="reps" id="reps" role="group" aria-label="Մենեջերներ"></div>
+
+  <div class="toolbar">
+    <input id="q" type="hidden" value=""><!-- որոնումը հանված է -->
+    <div class="seg" role="group" aria-label="Կարգավիճակ">
+      <button type="button" data-f="active" aria-pressed="true">Առաջիկա</button>
+      <button type="button" data-f="done" aria-pressed="false">Ավարտված</button>
+      <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
+    </div>
+    <select id="clinicF" aria-label="Կլինիկա"><option value="">Բոլոր կլինիկաները</option></select>
+  </div>
+
+  <section class="cal" id="cal" aria-label="Օրացույց">
+    <div class="cal-h">
+      <h2 id="calTitle">—</h2>
+      <p class="hint" id="calHint">Սեղմեք օրվա վրա՝ նոր այց ավելացնելու, կամ այցի վրա՝ բացելու համար</p>
+      <div class="cal-nav"><button type="button" id="calPrev" aria-label="Նախորդ ամիս">‹</button><button type="button" id="calToday">Այսօր</button><button type="button" id="calNext" aria-label="Հաջորդ ամիս">›</button></div>
+    </div>
+    <div class="cal-g" id="calGrid"></div>
+  </section>
+
+  <h2 class="listhead" id="listHead">Այցերի ցուցակ</h2>
+  <main id="list"></main>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <form class="panel" id="form" data-kind="visit" novalidate>
+    <div class="row"><h3 id="formTitle">Նոր այց</h3><button type="button" id="closeBtn" aria-label="Փակել">✕</button></div>
+    <div class="grid3">
+      <label>Ամսաթիվ *<input id="f_date" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off" required></label>
+      <label>Ժամ<input id="f_time" placeholder="օր.՝ 11:30"></label>
+      <label>Մենեջեր<select id="f_rep"></select></label>
+    </div>
+    <div class="grid2 only-event">
+      <label>Միջոցառման տեսակ *<select id="f_etype"></select></label>
+      <label>Մասնակիցների թիվ<input id="f_part" inputmode="numeric" placeholder="օր.՝ 25"></label>
+    </div>
+    <label class="only-event">Միջոցառման անվանում<input id="f_ename" placeholder="օր.՝ Կլոր սեղան գինեկոլոգների հետ"></label>
+    <label><span id="clinicLbl">Կլինիկա *</span><select id="f_clinic"></select></label>
+    <label class="only-event">Բանախոս<input id="f_speaker" placeholder="Անուն, ազգանուն"></label>
+    <label class="only-visit">Բժիշկներ <span class="hint">ամեն անուն՝ նոր տողից</span><textarea id="f_docs" rows="2"></textarea></label>
+    <div class="field msel-wrap"><span id="testsLbl">Քննարկված թեստեր</span><button type="button" id="f_testsBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button><div id="f_tests" class="msel-pop" role="group" aria-labelledby="testsLbl" hidden></div></div>
+
+    <div class="sec">Արդյունք</div>
+    <label>Թեմա<textarea id="f_topic" rows="2"></textarea></label>
+    <label class="only-visit">Պայմանավորվածություն<textarea id="f_agree" rows="2"></textarea></label>
+    <div class="field msel-wrap only-visit"><span id="objLbl">Առարկություններ</span><button type="button" id="f_objBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button><div id="f_obj" class="msel-pop" role="group" aria-labelledby="objLbl" hidden></div></div>
+    <label>Նշումներ<textarea id="f_notes" rows="2"></textarea></label>
+    <div class="field"><span>Կարգավիճակ</span>
+      <div class="statusseg" role="group" aria-label="Կարգավիճակ">
+        <button type="button" data-s="open" aria-pressed="true">Բաց</button>
+        <button type="button" data-s="done" aria-pressed="false">Ավարտված</button>
+      </div>
+    </div>
+    <div id="confirmBox" class="confirm" hidden><span id="delQ">Ջնջե՞լ այս այցը։</span> <button type="button" id="yesDel" class="danger">Այո, ջնջել</button><button type="button" id="noDel">Չեղարկել</button></div>
+    <div class="row">
+      <button type="button" id="delBtn" class="danger" hidden>Ջնջել</button>
+      <span></span>
+      <div class="actions"><button type="button" id="cancelBtn">Չեղարկել</button><button type="submit" id="saveBtn" class="primary">Պահպանել</button></div>
+    </div>
+  </form>
+</div>
+
+<div class="overlay" id="listsOverlay" hidden>
+  <div class="panel" role="dialog" aria-labelledby="listsTitle">
+    <div class="row"><h3 id="listsTitle">Ցուցակներ</h3><button type="button" id="listsClose" aria-label="Փակել">✕</button></div>
+    <p class="hint">Այս անունները հայտնվում են այցի ձևում՝ ընտրելու համար։ Փոփոխությունները պահպանվում են անմիջապես։</p>
+    <div id="listsBody" style="display:grid;gap:16px"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script src="vizit.js"></script>
+</body>
+</html>
