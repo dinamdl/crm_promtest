@@ -190,6 +190,18 @@
 
 <script src="masnakcutyun-data.js"></script>
 <script>
+/* one-time: people are shown as first name + surname initial (Աննա Շ.); different spellings of the same person become one */
+(function mergeKnownNames(){ try{ if(localStorage.getItem("promtest-names-short-v2"))return;
+  const P={"աննա շագրիյան":"Աննա Շ.","աննա շ":"Աննա Շ.","աննա աբազյան":"Աննա Ա.","աննա":"Աննա Ա.","դիանա բեգլարյան":"Դիանա Բ.","դիանա":"Դիանա Բ.","diana b.":"Դիանա Բ.","ասյա սարգսյան":"Ասյա Ս."};
+  const fx=x=>{ if(typeof x!=="string")return x; const n=P[x.replace(/\s+/g," ").trim().toLowerCase()]; return n||x };
+  const fixVal=v=>Array.isArray(v)?[...new Set(v.map(fx))]:fx(v);
+  ["promtest-lists-v1","promtest-crm-lists-v1"].forEach(k=>{const o=JSON.parse(localStorage.getItem(k)||"null"); if(!o)return; Object.keys(o).forEach(f=>{if(Array.isArray(o[f]))o[f]=fixVal(o[f])}); localStorage.setItem(k,JSON.stringify(o))});
+  ["promtest-events-v1","promtest-visits-v1"].forEach(k=>{const a=JSON.parse(localStorage.getItem(k)||"null"); if(!Array.isArray(a))return; a.forEach(r=>{["rep","responsible"].forEach(f=>{if(r[f])r[f]=fx(r[f])})}); localStorage.setItem(k,JSON.stringify(a))});
+  const R=JSON.parse(localStorage.getItem("promtest-renames")||"{}"); Object.assign(R,P); localStorage.setItem("promtest-renames",JSON.stringify(R));
+  localStorage.setItem("promtest-names-short-v2","1");
+}catch(e){} })();
+</script>
+<script>
 (function(){
   const $=id=>document.getElementById(id);
   const WD=["Կիրակի","Երկուշաբթի","Երեքշաբթի","Չորեքշաբթի","Հինգշաբթի","Ուրբաթ","Շաբաթ"];
@@ -207,7 +219,7 @@
   const AVC=["#765999","#2f7d8c","#b0604a","#4f7a3a","#8a5a9e","#3e5fa8","#9a6b1f","#a24d74"];
   const initials=n=>String(n||"?").replace(/[^\p{L}\s]/gu,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2)||"?";
   let REPS=[]; try{const l=JSON.parse(localStorage.getItem("promtest-crm-lists-v1")||"null"); if(l&&Array.isArray(l.reps))REPS=l.reps}catch(e){}
-  if(!REPS.length)REPS=["Արմինե","Լուսինե","Աննա","Աննա Շ.","Անահիտ","Սիրուշ","Վարդան"];
+  if(!REPS.length)REPS=["Արմինե","Լուսինե","Աննա Ա.","Աննա Շ.","Անահիտ","Սիրուշ","Վարդան","Դիանա Բ."];
   const avColor=n=>{const i=REPS.indexOf(n); let h=0; for(const c of String(n))h=(h*31+c.charCodeAt(0))>>>0; return AVC[(i>=0?i:h)%AVC.length]};
   const av=n=>`<span class="av" style="background:${avColor(n)}" aria-hidden="true">${esc(initials(n))}</span>`;
   try{kindF=localStorage.getItem("promtest-general-kind")||""}catch(e){}
@@ -229,7 +241,7 @@
   const ORGS={"Prom-Test":{c:"#765999",logo:"logo.png"},"Diagnostica":{c:"#233a6a",logo:"logos/diagnostica.png"},"PetCT":{c:"#4a6fa5",logo:"logos/petct.png"},"Proftest":{c:"#0a72c0",logo:"logos/proftest.png"},"Cell Therapy Center":{c:"#167a8b",logo:"logos/celltherapy.png"}};
   const orgTag=i=>{ if(!i.org)return ""; const o=ORGS[i.org];
     return `<span class="org"><i></i>${esc(i.org)}</span>` };
-  const PEOPLE=[...new Set([...REPS,...items.map(i=>i.person).filter(Boolean)])];
+  const PEOPLE=(a=>{const m=new Map(); a.forEach(x=>{const n=String(x||"").replace(/\s+/g," ").trim(); if(n&&!m.has(n.toLowerCase()))m.set(n.toLowerCase(),n)}); return [...m.values()]})([...REPS,...items.map(i=>i.person).filter(x=>x&&x!=="Diana B.")]);
   if(who&&!PEOPLE.includes(who))who="";
   const mine=i=>!who||i.person===who;
 

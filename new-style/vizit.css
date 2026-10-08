@@ -195,3 +195,27 @@ select option{color:var(--ink)}
 
 /* header-one-row: buttons stay on the title row, same on all pages */
 @media (min-width:761px){.wrap > header{flex-wrap:nowrap;align-items:flex-end}.wrap > header > div:first-child{flex:1 1 auto;min-width:0}.wrap > header > .actions{flex:none;flex-wrap:nowrap}}
+
+/* layout try: list on the left, calendar on the right */
+.wrap{max-width:1280px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);gap:20px;align-items:start}
+.split-list{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.split-list .listhead{margin:0;padding:0 14px;height:60px;display:flex;align-items:center;font-size:19px;border-bottom:1px solid var(--line)}
+.split-list #list{display:grid;gap:14px;padding:14px;background:var(--bg)}
+.split-list .month h2{margin-top:0}
+.split-cal .cal-h{height:60px;padding-block:0;flex-wrap:nowrap}
+.split-cal{position:sticky;top:16px}
+.split-cal .cal-h .hint{display:none}
+.split-cal .day{min-height:74px;padding:4px}
+.split-cal .pill{font-size:11px;padding:1px 5px}
+@media (max-width:980px){.split{grid-template-columns:1fr}.split-cal{position:static;order:-1}.split-cal .cal-h .hint{display:block}}
+
+/* employee select: active look when a person is chosen; status buttons step back */
+#repSel{width:auto;min-width:200px;transition:background .15s,border-color .15s}
+body.by-person #repSel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600;box-shadow:0 0 0 1px var(--accent)}
+body.by-person .seg button[aria-pressed=true]{background:transparent;color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--mark)}
+
+.chip.edit .ren{color:var(--accent)}
+.ren-form{display:inline-flex;gap:4px;align-items:center}
+.ren-form input{width:170px;padding:3px 8px;font-size:13px}
+.ren-form button{padding:2px 8px;font-size:12px;border-radius:999px}

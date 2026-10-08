@@ -10,7 +10,7 @@ window.SEED_EVENTS = [
     "org": "Prom-Test",
     "format": "Հովանավոր",
     "location": "Red Bridge Hotel",
-    "responsible": "Դիանա Բեգլարյան",
+    "responsible": "Դիանա Բ.",
     "audience": "Family doctors, therapists, rheumatologists, gastroenterologists, endocrinologists, cardiologists",
     "materials": "Roll-up",
     "notes": ""
@@ -25,7 +25,7 @@ window.SEED_EVENTS = [
     "org": "Prom-Test",
     "format": "Հովանավոր",
     "location": "Radisson Blu Hotel",
-    "responsible": "Դիանա Բեգլարյան",
+    "responsible": "Դիանա Բ.",
     "audience": "Gynecologists, reproductive specialists",
     "materials": "Roll-up",
     "notes": ""
@@ -40,7 +40,7 @@ window.SEED_EVENTS = [
     "org": "Prom-Test",
     "format": "Հովանավոր",
     "location": "Ibis Hotel",
-    "responsible": "Դիանա Բեգլարյան",
+    "responsible": "Դիանա Բ.",
     "audience": "Pregnant women",
     "materials": "Roll-up",
     "notes": ""
@@ -55,7 +55,7 @@ window.SEED_EVENTS = [
     "org": "Prom-Test",
     "format": "Հովանավոր",
     "location": "Courtyard Marriott",
-    "responsible": "Դիանա Բեգլարյան",
+    "responsible": "Դիանա Բ.",
     "audience": "Gynecologists, reproductive specialists",
     "materials": "Roll-up",
     "notes": ""
@@ -70,7 +70,7 @@ window.SEED_EVENTS = [
     "org": "Prom-Test",
     "format": "Հովանավոր",
     "location": "Armenia Marriott",
-    "responsible": "Դիանա Բեգլարյան",
+    "responsible": "Դիանա Բ.",
     "audience": "Allergists",
     "materials": "Roll-up",
     "notes": ""
@@ -85,7 +85,7 @@ window.SEED_EVENTS = [
     "org": "Prom-Test",
     "format": "Հովանավոր",
     "location": "Red Bridge Hotel",
-    "responsible": "Դիանա Բեգլարյան",
+    "responsible": "Դիանա Բ.",
     "audience": "",
     "materials": "",
     "notes": ""
@@ -110,10 +110,10 @@ window.SEED_LISTS = {
     "Cell Therapy Center"
   ],
   people: [
-    "Աննա Աբազյան",
-    "Աննա Շագրիյան",
-    "Ասյա Սարգսյան",
-    "Դիանա Բեգլարյան",
+    "Աննա Ա.",
+    "Աննա Շ.",
+    "Ասյա Ս.",
+    "Դիանա Բ.",
     "Արմինե",
     "Լուսինե",
     "Անահիտ",

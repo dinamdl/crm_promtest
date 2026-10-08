@@ -214,6 +214,18 @@
 
   <script src="masnakcutyun-data.js"></script>
   <script>
+/* one-time: people are shown as first name + surname initial (Աննա Շ.); different spellings of the same person become one */
+(function mergeKnownNames(){ try{ if(localStorage.getItem("promtest-names-short-v2"))return;
+  const P={"աննա շագրիյան":"Աննա Շ.","աննա շ":"Աննա Շ.","աննա աբազյան":"Աննա Ա.","աննա":"Աննա Ա.","դիանա բեգլարյան":"Դիանա Բ.","դիանա":"Դիանա Բ.","diana b.":"Դիանա Բ.","ասյա սարգսյան":"Ասյա Ս."};
+  const fx=x=>{ if(typeof x!=="string")return x; const n=P[x.replace(/\s+/g," ").trim().toLowerCase()]; return n||x };
+  const fixVal=v=>Array.isArray(v)?[...new Set(v.map(fx))]:fx(v);
+  ["promtest-lists-v1","promtest-crm-lists-v1"].forEach(k=>{const o=JSON.parse(localStorage.getItem(k)||"null"); if(!o)return; Object.keys(o).forEach(f=>{if(Array.isArray(o[f]))o[f]=fixVal(o[f])}); localStorage.setItem(k,JSON.stringify(o))});
+  ["promtest-events-v1","promtest-visits-v1"].forEach(k=>{const a=JSON.parse(localStorage.getItem(k)||"null"); if(!Array.isArray(a))return; a.forEach(r=>{["rep","responsible"].forEach(f=>{if(r[f])r[f]=fx(r[f])})}); localStorage.setItem(k,JSON.stringify(a))});
+  const R=JSON.parse(localStorage.getItem("promtest-renames")||"{}"); Object.assign(R,P); localStorage.setItem("promtest-renames",JSON.stringify(R));
+  localStorage.setItem("promtest-names-short-v2","1");
+}catch(e){} })();
+</script>
+  <script>
     (function () {
       var MS = ["հնվ", "փտր", "մրտ", "ապր", "մյս", "հնս", "հլս", "օգս", "սեպ", "հոկ", "նոյ", "դեկ"];
       var LOGOS = [["Prom-Test", "logo.png"], ["Diagnostica", "logos/diagnostica.png"], ["PetCT", "logos/petct.png"], ["Proftest", "logos/proftest.png"], ["Cell Therapy Center", "logos/celltherapy.png"]];

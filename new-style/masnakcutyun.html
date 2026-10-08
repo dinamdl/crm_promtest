@@ -7,15 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="masnakcutyun.css">
+<link rel="stylesheet" href="modern.css">
 </head>
-<body>
+<body class="modern">
 
 <div class="wrap">
+  <section class="m-hero">
   <header>
     <div>
       <a class="brand" href="index.html">← Հետ</a>
       <div class="mode" id="mode">Բեռնվում է…</div>
-      <h1>Մասնակցություն</h1>
+      <h1><span class="m-ico dia" aria-hidden="true"><i></i></span>Մասնակցություն</h1>
       <p class="sub">Հովանավորվող կոնֆերանսներ, պատասխանատուներ և տպագրական նյութեր</p>
     </div>
     <div class="actions">
@@ -26,18 +28,25 @@
   </header>
 
   <section class="summary" id="summary" aria-label="Ամփոփում"></section>
-  <div class="reps" id="reps" role="group" aria-label="Աշխատակիցներ"></div>
+  </section>
+  <div class="reps" id="reps" role="group" aria-label="Աշխատակիցներ" hidden></div>
 
-  <div class="toolbar">
+  <div class="toolbar m-bar">
     <input id="q" type="hidden" value=""><!-- որոնումը հանված է -->
     <div class="seg" role="group" aria-label="Կարգավիճակ">
       <button type="button" data-f="upcoming" aria-pressed="true">Առաջիկա</button>
       <button type="button" data-f="past" aria-pressed="false">Անցած</button>
-      <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
+      <button type="button" data-f="all" aria-pressed="false">Ընդհանուր</button>
     </div>
     <select id="person" aria-label="Պատասխանատու"><option value="">Բոլոր պատասխանատուները</option></select>
   </div>
 
+<div class="split">
+  <div class="split-list">
+    <h2 class="listhead">Մասնակցությունների ցուցակ</h2>
+    <main id="list"></main>
+  </div>
+  <div class="split-cal">
   <section class="cal" id="cal" aria-label="Օրացույց">
     <div class="cal-h">
       <h2 id="calTitle">—</h2>
@@ -46,9 +55,10 @@
     </div>
     <div class="cal-g" id="calGrid"></div>
   </section>
+  </div>
+  </div>
 
-  <h2 class="listhead">Մասնակցությունների ցուցակ</h2>
-  <main id="list"></main>
+
 </div>
 
 <div class="overlay" id="overlay" hidden>
@@ -88,5 +98,10 @@
 
 <script src="masnakcutyun-data.js"></script>
 <script src="masnakcutyun.js"></script>
+<script>
+/* active look for the person select */
+(function(){const sel=document.getElementById("person"); const t=()=>document.body.classList.toggle("by-person",!!sel.value);
+  sel.addEventListener("change",t); const orig=render; render=function(){orig(); t()}; t();})();
+</script>
 </body>
 </html>

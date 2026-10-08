@@ -1,3 +1,13 @@
+/* one-time: people are shown as first name + surname initial (Աննա Շ.); different spellings of the same person become one */
+(function mergeKnownNames(){ try{ if(localStorage.getItem("promtest-names-short-v2"))return;
+  const P={"աննա շագրիյան":"Աննա Շ.","աննա շ":"Աննա Շ.","աննա աբազյան":"Աննա Ա.","աննա":"Աննա Ա.","դիանա բեգլարյան":"Դիանա Բ.","դիանա":"Դիանա Բ.","diana b.":"Դիանա Բ.","ասյա սարգսյան":"Ասյա Ս."};
+  const fx=x=>{ if(typeof x!=="string")return x; const n=P[x.replace(/\s+/g," ").trim().toLowerCase()]; return n||x };
+  const fixVal=v=>Array.isArray(v)?[...new Set(v.map(fx))]:fx(v);
+  ["promtest-lists-v1","promtest-crm-lists-v1"].forEach(k=>{const o=JSON.parse(localStorage.getItem(k)||"null"); if(!o)return; Object.keys(o).forEach(f=>{if(Array.isArray(o[f]))o[f]=fixVal(o[f])}); localStorage.setItem(k,JSON.stringify(o))});
+  ["promtest-events-v1","promtest-visits-v1"].forEach(k=>{const a=JSON.parse(localStorage.getItem(k)||"null"); if(!Array.isArray(a))return; a.forEach(r=>{["rep","responsible"].forEach(f=>{if(r[f])r[f]=fx(r[f])})}); localStorage.setItem(k,JSON.stringify(a))});
+  const R=JSON.parse(localStorage.getItem("promtest-renames")||"{}"); Object.assign(R,P); localStorage.setItem("promtest-renames",JSON.stringify(R));
+  localStorage.setItem("promtest-names-short-v2","1");
+}catch(e){} })();
 /* Prom-Test — Միջոցառումներ (mijocarum.html). Логика интерфейса.
    Сейчас данные хранятся в localStorage браузера (функции saveVisit/removeVisit/useLocal).
    Для сайта: заменить их на AJAX-запросы к PHP (см. README-для-программиста.md). */
@@ -41,7 +51,7 @@ function applyPerms(){
   $("listsBtn").hidden=db&&!canEdit;
   if($("mode"))$("mode").textContent=!db?"":canEdit?"Ընդհանուր տվյալներ · լիարժեք իրավունք":(canWrite&&me)?"Կարող եք ավելացնել այց և խմբագրել ձեր ավելացրածը":"Միայն դիտում";
 }
-function useLocal(){try{lists=JSON.parse(localStorage.getItem(LISTS_KEY)||"null")}catch(e){lists=null} addNewOrgs(); mode="local"; visits=loadLocal(); applyPerms(); render(); handleHash()}
+function useLocal(){try{lists=JSON.parse(localStorage.getItem(LISTS_KEY)||"null")}catch(e){lists=null} applyRenames(); addNewOrgs(); mode="local"; visits=loadLocal(); applyPerms(); render(); handleHash()}
 async function init(){
   render();
   if(!window.claude||!window.claude.use){useLocal();return}
@@ -67,7 +77,7 @@ function addNewOrgs(){ const NEW=["Cell Therapy Center"]; let done={}; try{done=
 /* ---------- lists ---------- */
 const LIST_DEFS=[["reps","Մենեջերներ"],["clinics","Կլինիկաներ / վայրեր"],["tests","Թեստեր"],["objections","Առարկություններ"],["eventTypes","Միջոցառման տեսակներ"],["orgs","Կազմակերպություններ"]];
 const DEFAULT_LISTS={
-  reps:["Արմինե","Լուսինե","Աննա","Աննա Շ.","Անահիտ","Սիրուշ","Վարդան"],
+  reps:["Արմինե","Լուսինե","Աննա Ա.","Աննա Շ.","Անահիտ","Սիրուշ","Վարդան","Դիանա Բ."],
   clinics:["8-րդ պոլիկլինիկա","15-րդ պոլիկլինիկա","Շենգավիթ ԲԿ","Սլավմեդ","Հրազդան ԲԿ","Իզմիրլյան ԲԿ","Երևան ԲԿ","Զեյթուն պոլիկլինիկա","Նորք-Մարաշ ԲԿ","Սուրբ Գրիգոր Լուսավորիչ ԲԿ"],
   tests:["Femoflor","Androflor","HPV","NIFTY","CA 125","HE4","Հորմոններ","Սկրինինգներ","Իմունոքվանտեքս","Սպերմոգրամմա","Բակ. անալիզ","Վիրուսներ","Աուտոիմուն"],
   objections:["Թանկ է","Աշխատում են այլ լաբորատորիայի հետ","Պատասխանը երկար է","Նմուշառման հարց","Պետք է մտածել","Պացիենտները չեն համաձայնում"],
@@ -167,7 +177,7 @@ function render(){
   const rc={}; visits.forEach(v=>{if(v.rep)rc[v.rep]=(rc[v.rep]||0)+(status(v)!=="done"?1:0)});
   window._rc=rc; }
   const rc=window._rc;
-  const reps=[...new Set([...L("reps"),...visits.map(v=>v.rep).filter(Boolean)])];
+  const reps=(a=>{const m=new Map(); a.forEach(x=>{const n=String(x||"").replace(/\s+/g," ").trim(); if(n&&!m.has(n.toLowerCase()))m.set(n.toLowerCase(),n)}); return [...m.values()]})([...L("reps"),...visits.map(v=>v.rep)]);
   $("reps").innerHTML=`<button type="button" class="rep" data-r="" aria-pressed="${!repF}"><span class="av" style="background:var(--mark);color:var(--mark-ink)">✦</span>Բոլորը</button>`+
     reps.map(r=>`<button type="button" class="rep" data-r="${esc(r)}" aria-pressed="${repF===r}">${av(r)}${esc(r)} <em>${rc[r]||0}</em></button>`).join("");
 
@@ -327,7 +337,7 @@ document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{filter=b.data
 function renderListsBody(){ if($("listsOverlay").hidden)return;
   $("listsBody").innerHTML=LIST_DEFS.filter(([k])=>PAGE==="event"?k!=="objections":k!=="eventTypes").map(([k,t])=>{const a=L(k);
     return `<section class="listsec"><h4>${t} <small>${a.length}</small></h4>
-    <div class="chips">${a.map((v,i)=>`<span class="chip edit">${esc(v)}<button type="button" data-k="${k}" data-i="${i}" aria-label="Հեռացնել ${esc(v)}">✕</button></span>`).join("")||'<span class="hint">Դատարկ է</span>'}</div>
+    <div class="chips">${a.map((v,i)=>`<span class="chip edit">${esc(v)}<button type="button" class="ren" data-k="${k}" data-ri="${i}" aria-label="Փոխել ${esc(v)}" title="Փոխել անունը բոլոր էջերում">✎</button><button type="button" data-k="${k}" data-i="${i}" aria-label="Հեռացնել ${esc(v)}">✕</button></span>`).join("")||'<span class="hint">Դատարկ է</span>'}</div>
     <form class="addrow" data-k="${k}"><input id="add_${k}" autocomplete="off" placeholder="Նոր անուն" aria-label="Նոր անուն՝ ${t}"><button type="submit">Ավելացնել</button></form><div class="similar" id="sim_${k}" hidden></div></section>`}).join("")}
 $("listsBtn").onclick=()=>{$("listsOverlay").hidden=false; renderListsBody()};
 $("listsClose").onclick=()=>$("listsOverlay").hidden=true;
@@ -385,4 +395,49 @@ $("listsBody").addEventListener("click",async e=>{
   const a=e.target.closest(".sim-add"); if(a){const k=a.dataset.k, v=$("add_"+k).value.trim(); if(!v)return;
     const next=allLists(); next[k].push(v); try{await saveLists(next); toast("Ավելացվեց՝ "+v)}catch(err){toast("Չհաջողվեց պահպանել")}}
 });
+
+/* ---------- ✎ rename in «Ցուցակներ»: the new name replaces the old one in every list and every saved record on all pages ---------- */
+
+/* renames done on any page are remembered and applied to this page's lists too (also when the lists were never saved) */
+function applyRenames(){ let R={}; try{R=JSON.parse(localStorage.getItem("promtest-renames")||"{}")}catch(e){} if(!Object.keys(R).length)return;
+  const map=x=>{let v=x, guard=0; while(R[String(v).toLowerCase()]&&guard++<10)v=R[String(v).toLowerCase()]; return v};
+  const base=lists||allLists(); let ch=!lists; const out={};
+  Object.keys(base).forEach(k=>{ if(!Array.isArray(base[k])){out[k]=base[k];return} const m=[...new Set(base[k].map(map))]; if(JSON.stringify(m)!==JSON.stringify(base[k]))ch=true; out[k]=m });
+  if(ch){lists=out; try{localStorage.setItem(LISTS_KEY,JSON.stringify(lists))}catch(e){}} }
+function renameEverywhere(oldV,newV){
+  try{const R=JSON.parse(localStorage.getItem("promtest-renames")||"{}"); R[String(oldV).toLowerCase()]=newV; delete R[String(newV).toLowerCase()]; localStorage.setItem("promtest-renames",JSON.stringify(R))}catch(e){}
+  if(!lists){ try{lists=allLists(); localStorage.setItem(LISTS_KEY,JSON.stringify(lists))}catch(e){} }
+  const sameList=x=>String(x).trim().toLowerCase()===String(oldV).trim().toLowerCase();
+  const fix=v=>{ if(Array.isArray(v))return [...new Set(v.map(x=>sameList(x)?newV:x))];
+    if(typeof v==="string"){ if(sameList(v))return newV;
+      if(v.includes(",")){const parts=v.split(/\s*,\s*/); if(parts.some(sameList))return [...new Set(parts.map(x=>sameList(x)?newV:x))].join(", ")} }
+    return v };
+  let n=0;
+  ["promtest-lists-v1","promtest-crm-lists-v1"].forEach(key=>{ try{const o=JSON.parse(localStorage.getItem(key)||"null"); if(!o)return;
+    Object.keys(o).forEach(k=>{ if(Array.isArray(o[k])){const b=JSON.stringify(o[k]); o[k]=fix(o[k]); if(JSON.stringify(o[k])!==b)n++} });
+    localStorage.setItem(key,JSON.stringify(o))}catch(e){} });
+  ["promtest-events-v1","promtest-visits-v1"].forEach(key=>{ try{const a=JSON.parse(localStorage.getItem(key)||"null"); if(!Array.isArray(a))return;
+    a.forEach(r=>Object.keys(r).forEach(f=>{ if(f==="id"||f==="kind"||f==="status")return; const b=JSON.stringify(r[f]); r[f]=fix(r[f]); if(JSON.stringify(r[f])!==b)n++ }));
+    localStorage.setItem(key,JSON.stringify(a))}catch(e){} });
+  return n;
+}
+$("listsBody").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-ri]"); if(!b)return;
+  const k=b.dataset.k, old=L(k)[+b.dataset.ri]; if(old==null)return;
+  const chip=b.closest(".chip");
+  chip.innerHTML=`<form class="ren-form"><input value="${esc(old)}" aria-label="Նոր անուն"><button type="submit">✓</button><button type="button" class="ren-x">✕</button></form>`;
+  const inp=chip.querySelector("input"); inp.focus(); inp.select();
+  chip.querySelector(".ren-x").onclick=()=>renderListsBody();
+  chip.querySelector("form").onsubmit=ev=>{ev.preventDefault(); ev.stopPropagation(); const nv=inp.value.replace(/\s+/g," ").trim();
+    if(!nv||nv===old){renderListsBody();return}
+    renameEverywhere(old,nv); toast("«"+old+"» → «"+nv+"»՝ բոլոր էջերում"); setTimeout(()=>location.reload(),700)};
+});
+
+/* names already used in saved records (but missing from «Ցուցակներ») are added back, so they can be renamed with ✎ */
+$("harvestBtn").onclick=async()=>{
+  const next=allLists(), F={reps:v=>[v.rep],clinics:v=>[v.clinic],tests:v=>arr(v.tests),objections:v=>arr(v.objections),eventTypes:v=>[v.etype],orgs:v=>[v.org]}; let n=0;
+  Object.keys(F).forEach(k=>{ if(!next[k])next[k]=[]; visits.forEach(v=>F[k](v).forEach(x=>{x=String(x||"").trim(); if(x&&!next[k].some(y=>y.toLowerCase()===x.toLowerCase())){next[k].push(x);n++}})) });
+  if(!n){toast("Նոր անուններ չգտնվեցին");return}
+  try{await saveLists(next); toast("Ավելացվեց "+n+" անուն")}catch(e){toast("Չհաջողվեց պահպանել")}
+};
 init();

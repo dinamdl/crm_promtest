@@ -1,0 +1,83 @@
+/* shared by Այց / Միջոցառում / Մասնակցություն */
+/* layout try: list on the left, calendar on the right */
+.wrap{max-width:1280px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);gap:20px;align-items:start}
+.split-list{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.split-list .listhead{margin:0;padding:0 14px;height:60px;display:flex;align-items:center;font-size:19px;border-bottom:1px solid var(--line)}
+.split-list #list{display:grid;gap:14px;padding:14px;background:var(--bg)}
+.split-list .month h2{margin-top:0}
+.split-cal .cal-h{height:60px;padding-block:0;flex-wrap:nowrap}
+.split-cal{position:sticky;top:16px}
+.split-cal .cal-h .hint{display:none}
+.split-cal .day{min-height:74px;padding:4px}
+.split-cal .pill{font-size:11px;padding:1px 5px}
+@media (max-width:980px){.split{grid-template-columns:1fr}.split-cal{position:static;order:-1}.split-cal .cal-h .hint{display:block}}
+
+/* employee select: active look when a person is chosen; status buttons step back */
+#repSel{width:auto;min-width:200px;transition:background .15s,border-color .15s}
+body.by-person #repSel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600;box-shadow:0 0 0 1px var(--accent)}
+body.by-person .seg button[aria-pressed=true]{background:transparent;color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--mark)}
+
+.chip.edit .ren{color:var(--accent)}
+.ren-form{display:inline-flex;gap:4px;align-items:center}
+.ren-form input{width:170px;padding:3px 8px;font-size:13px}
+.ren-form button{padding:2px 8px;font-size:12px;border-radius:999px}
+
+/* Modern look proposal for «Այց» (loaded after vizit.css) */
+body.modern{background:radial-gradient(1200px 500px at 85% -10%,rgb(118 89 153 / .10),transparent 60%),var(--bg)}
+.modern .wrap{gap:18px;padding-block:24px 64px}
+/* hero */
+.m-hero{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px 26px 22px;display:grid;gap:22px;box-shadow:0 1px 2px rgb(30 15 60 / .04),0 20px 50px rgb(60 30 100 / .08)}
+.m-hero > *{position:relative;z-index:1}
+.m-hero > .hh-globe{position:absolute;z-index:0;top:-130px;right:-90px;width:420px;height:auto;color:var(--accent);opacity:.08;pointer-events:none}
+.m-hero header{align-items:center}
+.m-hero .brand{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);border-radius:999px;padding:4px 12px;margin-bottom:12px;font-size:12.5px}
+.m-hero h1{display:flex;align-items:center;gap:14px;font-size:clamp(28px,3.6vw,38px);letter-spacing:-.025em}
+.m-ico{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#9a7fc0);display:grid;place-items:center;box-shadow:0 8px 20px rgb(118 89 153 / .35)}
+.m-ico i{width:14px;height:14px;border-radius:50%;background:#fff}
+.m-hero .sub{margin-top:8px!important;max-width:60ch}
+.modern .actions button{border-radius:999px;padding:9px 18px;font-weight:500}
+.modern .actions .primary{box-shadow:0 8px 20px rgb(118 89 153 / .30)}
+.modern .actions .primary::before{content:"+ "}
+/* stat tiles */
+.m-hero .summary{background:none;border:0;border-radius:0;gap:12px;overflow:visible;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.m-hero .stat{background:linear-gradient(180deg,var(--surface),var(--bg));border:1px solid var(--line);border-radius:16px;padding:16px 18px;position:relative}
+.m-hero .stat::before{content:"";position:absolute;left:18px;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+.m-hero .stat b{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.m-hero .stat.top b{font-size:16px;padding-top:10px}
+/* filter bar */
+.m-bar{position:sticky;top:10px;z-index:5;background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:6px;gap:8px;box-shadow:0 6px 20px rgb(60 30 100 / .06)}
+.m-bar .seg{border:0;background:var(--bg);border-radius:999px;padding:3px}
+.m-bar .seg button{border-radius:999px;padding:7px 16px}
+.m-bar .seg button[aria-pressed=true]{background:var(--surface);color:var(--accent);box-shadow:0 1px 3px rgb(30 15 60 / .15);font-weight:600}
+.m-bar select{border-radius:999px;border-color:transparent;background:var(--bg);padding:8px 14px}
+body.modern.by-person .m-bar #repSel{background:var(--accent-soft);border-color:var(--accent)}
+body.modern.by-person .m-bar .seg button[aria-pressed=true]{background:transparent;box-shadow:inset 0 -2px 0 var(--mark);color:var(--ink)}
+/* list + calendar panels */
+.modern .split-list,.modern .split-cal .cal{border-radius:20px;box-shadow:0 1px 2px rgb(30 15 60 / .04),0 14px 36px rgb(60 30 100 / .06)}
+.modern .split-list #list{background:var(--surface)}
+.modern .split-list .listhead,.modern .split-cal .cal-h{border-bottom-color:transparent;background:var(--surface)}
+.modern .month h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.modern .ev{border-radius:16px;border-color:transparent;background:var(--bg);padding:14px 16px;transition:transform .15s,box-shadow .15s,background .15s}
+.modern .ev:hover{background:var(--surface);border-color:var(--line);box-shadow:0 10px 24px rgb(60 30 100 / .10);transform:translateY(-1px)}
+.modern .ev .date{border-right:0;background:var(--surface);border-radius:12px;padding:8px 0;box-shadow:inset 0 0 0 1px var(--line)}
+.modern .ev .date b{color:var(--accent)}
+.modern .state{border-radius:999px;padding:4px 10px}
+.modern .chip{border-radius:999px}
+/* calendar */
+.modern .cal-g{gap:4px;padding:0 10px 10px}
+.modern .cal-wd{border-bottom:0;font-weight:600}
+.modern .day{border:0!important;border-radius:12px;background:var(--bg);min-height:70px}
+.modern .day.out{background:transparent;opacity:.55}
+.modern .day:hover{background:var(--accent-soft)}
+.modern .day.today{background:var(--surface);box-shadow:inset 0 0 0 2px var(--accent)}
+.modern .pill{border-radius:999px;border:0;background:var(--surface);box-shadow:0 1px 2px rgb(30 15 60 / .12)}
+.modern .cal-nav button{border-radius:999px}
+@media (prefers-reduced-motion:reduce){.modern .ev{transition:none}.modern .ev:hover{transform:none}}
+@media (max-width:640px){.m-bar{border-radius:16px;position:static}.m-hero{padding:18px}}
+
+.m-ico.sq i{border-radius:3px}
+.m-ico.dia i{border-radius:2px;transform:rotate(45deg);width:13px;height:13px}
+body.modern.by-person .m-bar #person{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.modern .pill.event{background:var(--accent);color:var(--accent-ink)}
+.m-hero .stat.next b{font-size:16px;font-weight:600;letter-spacing:0;line-height:1.35;padding-top:10px}

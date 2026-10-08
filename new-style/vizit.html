@@ -7,14 +7,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="vizit.css">
+<link rel="stylesheet" href="modern.css">
 </head>
-<body>
+<body class="modern">
 <div class="wrap">
+  <section class="m-hero">
   <header>
     <div>
       <a class="brand" href="index.html">← Հետ</a>
       <!-- <div class="mode" id="mode">Բեռնվում է…</div> -->
-      <h1>Այցեր</h1>
+      <h1><span class="m-ico" aria-hidden="true"><i></i></span>Այցեր</h1>
       <p class="sub" id="subline">Բժիշկների և կլինիկաների այցեր, պայմանավորվածություններ և առարկություններ</p>
     </div>
     <div class="actions">
@@ -26,18 +28,26 @@
 
 
   <section class="summary" id="summary" aria-label="Ամփոփում"></section>
-  <div class="reps" id="reps" role="group" aria-label="Մենեջերներ"></div>
+  </section>
+  <div class="reps" id="reps" role="group" aria-label="Մենեջերներ" hidden></div>
 
-  <div class="toolbar">
+  <div class="toolbar m-bar">
     <input id="q" type="hidden" value=""><!-- որոնումը հանված է -->
     <div class="seg" role="group" aria-label="Կարգավիճակ">
       <button type="button" data-f="active" aria-pressed="true">Առաջիկա</button>
       <button type="button" data-f="done" aria-pressed="false">Ավարտված</button>
       <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
     </div>
+    <select id="repSel" aria-label="Մենեջեր"><option value="">Աշխատակից</option></select>
     <select id="clinicF" aria-label="Կլինիկա"><option value="">Բոլոր կլինիկաները</option></select>
   </div>
 
+<div class="split">
+  <div class="split-list">
+    <h2 class="listhead" id="listHead">Այցերի ցուցակ</h2>
+    <main id="list"></main>
+  </div>
+  <div class="split-cal">
   <section class="cal" id="cal" aria-label="Օրացույց">
     <div class="cal-h">
       <h2 id="calTitle">—</h2>
@@ -46,9 +56,10 @@
     </div>
     <div class="cal-g" id="calGrid"></div>
   </section>
+  </div>
+  </div>
 
-  <h2 class="listhead" id="listHead">Այցերի ցուցակ</h2>
-  <main id="list"></main>
+
 </div>
 
 <div class="overlay" id="overlay" hidden>
@@ -57,7 +68,7 @@
     <div class="grid3">
       <label>Ամսաթիվ *<input id="f_date" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off" required></label>
       <label>Ժամ<input id="f_time" placeholder="օր.՝ 11:30"></label>
-      <label>Մենեջեր<select id="f_rep"></select></label>
+      <label>Աշխատակից<select id="f_rep"></select></label>
     </div>
     <div class="grid2 only-event">
       <label>Միջոցառման տեսակ *<select id="f_etype"></select></label>
@@ -94,9 +105,25 @@
     <div class="row"><h3 id="listsTitle">Ցուցակներ</h3><button type="button" id="listsClose" aria-label="Փակել">✕</button></div>
     <p class="hint">Այս անունները հայտնվում են այցի ձևում՝ ընտրելու համար։ Փոփոխությունները պահպանվում են անմիջապես։</p>
     <div id="listsBody" style="display:grid;gap:16px"></div>
+    <button type="button" id="harvestBtn">Ավելացնել այցերում արդեն օգտագործված անունները</button>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
 <script src="vizit.js"></script>
+<script>
+/* մենեջերները՝ select-ով */
+(function(){
+  const sel=document.getElementById("repSel");
+  function fill(){
+    const rc={}; visits.forEach(v=>{if(v.rep&&(v.kind||"visit")==="visit"&&status(v)!=="done")rc[v.rep]=(rc[v.rep]||0)+1});
+    const reps=(a=>{const m=new Map(); a.forEach(x=>{const n=String(x||"").replace(/\s+/g," ").trim(); if(n&&!m.has(n.toLowerCase()))m.set(n.toLowerCase(),n)}); return [...m.values()]})([...L("reps"),...visits.map(v=>v.rep)]);
+    sel.innerHTML='<option value="">Բոլոր մենեջերները</option>'+reps.map(r=>`<option value="${esc(r)}"${repF===r?" selected":""}>${esc(r)} (${rc[r]||0})</option>`).join("");
+    document.body.classList.toggle("by-person",!!repF);
+  }
+  const orig=render; render=function(){orig(); fill()};
+  sel.addEventListener("change",()=>{repF=sel.value; render()});
+  fill();
+})();
+</script>
 </body>
 </html>

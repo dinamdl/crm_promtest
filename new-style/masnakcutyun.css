@@ -207,3 +207,8 @@ select option{color:var(--ink)}
 
 /* header-one-row: buttons stay on the title row, same on all pages */
 @media (min-width:761px){.wrap > header{flex-wrap:nowrap;align-items:flex-end}.wrap > header > div:first-child{flex:1 1 auto;min-width:0}.wrap > header > .actions{flex:none;flex-wrap:nowrap}}
+
+.chip.edit .ren{color:var(--accent)}
+.ren-form{display:inline-flex;gap:4px;align-items:center}
+.ren-form input{width:170px;padding:3px 8px;font-size:13px}
+.ren-form button{padding:2px 8px;font-size:12px;border-radius:999px}
