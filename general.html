@@ -231,12 +231,12 @@
   if(!part.length&&window.SEED_EVENTS)part=window.SEED_EVENTS;
   const items=[];
   crm.forEach(v=>{ if(!v.date)return; const k=v.kind==="event"?"event":"visit";
-    items.push({kind:k,from:v.date,to:v.date,time:v.time||"",done:k==="event"?v.date<new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10):v.status==="done",
+    items.push({kind:k,from:v.date,to:v.date,time:v.time||"",done:v.date<new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),
       title:k==="event"?(v.ename||v.etype||"Միջոցառում"):(v.clinic||"Այց"),
       meta:(k==="event"?[v.etype,v.clinic]:[arr(v.tests).slice(0,3).join(", ")]).filter(Boolean).join(" · "),
       person:v.rep||"",org:k==="event"?(v.org||""):"",href:k==="event"?"mijocarum.html":"vizit.html"}) });
   part.forEach(e=>{ if(!e.start)return;
-    items.push({kind:"part",from:e.start,to:e.end||e.start,time:e.time||"",done:false,
+    items.push({kind:"part",from:e.start,to:e.end||e.start,time:e.time||"",done:(e.end||e.start)<new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),
       title:e.name||"Միջոցառում",meta:[e.location,e.format].filter(Boolean).join(" · "),person:e.responsible||"",org:e.org||"",href:"masnakcutyun.html"}) });
   const ORGS={"Prom-Test":{c:"#765999",logo:"logo.png"},"Diagnostica":{c:"#233a6a",logo:"logos/diagnostica.png"},"PetCT":{c:"#4a6fa5",logo:"logos/petct.png"},"Proftest":{c:"#0a72c0",logo:"logos/proftest.png"},"Cell Therapy Center":{c:"#167a8b",logo:"logos/celltherapy.png"}};
   const orgTag=i=>{ if(!i.org)return ""; const o=ORGS[i.org];

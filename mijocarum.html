@@ -1,131 +1,161 @@
 <!doctype html>
 <html lang="hy">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Prom-Test միջոցառումներ</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
-<link rel="stylesheet" href="mijocarum.css">
-<link rel="stylesheet" href="modern.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Prom-Test միջոցառումներ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="mijocarum.css">
+  <link rel="stylesheet" href="modern.css">
 </head>
+
 <body class="modern">
-<div class="wrap">
-  <section class="m-hero">
-  <header>
-    <div>
-      <a class="brand" href="index.html">← Հետ</a>
-      <div class="mode" id="mode">Բեռնվում է…</div>
-      <h1><span class="m-ico sq" aria-hidden="true"><i></i></span>Միջոցառումներ</h1>
-      <p class="sub" id="subline">Կլոր սեղաններ, պրեզենտացիաներ և կոնֆերանսներ՝ բանախոսներով և մասնակիցներով</p>
+  <div class="wrap">
+    <section class="m-hero">
+      <header>
+        <div>
+          <a class="brand" href="index.html">← Հետ</a>
+          <div class="mode" id="mode">Բեռնվում է…</div>
+          <h1><span class="m-ico sq" aria-hidden="true"><i></i></span>Միջոցառումներ</h1>
+          <p class="sub" id="subline">Կլոր սեղաններ, պրեզենտացիաներ և կոնֆերանսներ՝ բանախոսներով և մասնակիցներով</p>
+        </div>
+        <div class="actions">
+          <button id="listsBtn" type="button">Ցուցակներ</button>
+          <button id="exportBtn" type="button">Արտահանել CSV</button>
+          <button id="addBtn" class="primary" type="button">Նոր միջոցառում</button>
+        </div>
+      </header>
+
+
+      <section class="summary" id="summary" aria-label="Ամփոփում"></section>
+    </section>
+    <div class="reps" id="reps" role="group" aria-label="Մենեջերներ" hidden></div>
+
+    <div class="toolbar m-bar">
+      <input id="q" type="hidden" value=""><!-- որոնումը հանված է -->
+      <div class="seg" role="group" aria-label="Կարգավիճակ">
+        <button type="button" data-f="active" aria-pressed="true">Առաջիկա</button>
+        <button type="button" data-f="done" aria-pressed="false">Ավարտված</button>
+        <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
+      </div>
+      <select id="repSel" aria-label="Մենեջեր">
+        <option value="">Բոլոր մենեջերները</option>
+      </select>
+      <select id="accF" aria-label="Private / Public">
+        <option value="">Private և Public</option>
+        <option value="private">🔒 Private</option>
+        <option value="public">🌐 Public</option>
+      </select>
+      <select id="clinicF" aria-label="Կլինիկա">
+        <option value="">Բոլոր կլինիկաները</option>
+      </select>
     </div>
-    <div class="actions">
-      <button id="listsBtn" type="button">Ցուցակներ</button>
-      <button id="exportBtn" type="button">Արտահանել CSV</button>
-      <button id="addBtn" class="primary" type="button">Նոր միջոցառում</button>
-    </div>
-  </header>
 
-
-  <section class="summary" id="summary" aria-label="Ամփոփում"></section>
-  </section>
-  <div class="reps" id="reps" role="group" aria-label="Մենեջերներ" hidden></div>
-
-  <div class="toolbar m-bar">
-    <input id="q" type="hidden" value=""><!-- որոնումը հանված է -->
-    <div class="seg" role="group" aria-label="Կարգավիճակ">
-      <button type="button" data-f="active" aria-pressed="true">Առաջիկա</button>
-      <button type="button" data-f="done" aria-pressed="false">Ավարտված</button>
-      <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
-    </div>
-    <select id="repSel" aria-label="Մենեջեր"><option value="">Բոլոր մենեջերները</option></select>
-    <select id="accF" aria-label="Private / Public"><option value="">Private և Public</option><option value="private">🔒 Private</option><option value="public">🌐 Public</option></select>
-    <select id="clinicF" aria-label="Կլինիկա"><option value="">Բոլոր կլինիկաները</option></select>
-  </div>
-
-<div class="split">
-  <div class="split-list">
-    <h2 class="listhead" id="listHead">Միջոցառումների ցուցակ</h2>
-    <main id="list"></main>
-  </div>
-  <div class="split-cal">
-  <section class="cal" id="cal" aria-label="Օրացույց">
-    <div class="cal-h">
-      <h2 id="calTitle">—</h2>
-      <p class="hint" id="calHint">Սեղմեք օրվա վրա՝ նոր այց ավելացնելու, կամ այցի վրա՝ բացելու համար</p>
-      <div class="cal-nav"><button type="button" id="calPrev" aria-label="Նախորդ ամիս">‹</button><button type="button" id="calToday">Այսօր</button><button type="button" id="calNext" aria-label="Հաջորդ ամիս">›</button></div>
-    </div>
-    <div class="cal-g" id="calGrid"></div>
-  </section>
-  </div>
-  </div>
-
-
-</div>
-
-<div class="overlay" id="overlay" hidden>
-  <form class="panel" id="form" data-kind="visit" novalidate>
-    <div class="row"><h3 id="formTitle">Նոր այց</h3><button type="button" id="closeBtn" aria-label="Փակել">✕</button></div>
-    <div class="grid3">
-      <label>Ամսաթիվ *<input id="f_date" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric" autocomplete="off" required></label>
-      <label>Ժամ<input id="f_time" placeholder="օր.՝ 11:30"></label>
-      <label>Մենեջեր<select id="f_rep"></select></label>
-    </div>
-    <div class="grid2 only-event">
-      <label>Միջոցառման տեսակ *<select id="f_etype"></select></label>
-      <label>Մասնակիցների թիվ<input id="f_part" inputmode="numeric" placeholder="օր.՝ 25"></label>
-    </div>
-    <div class="field only-event"><span>Տեսակ</span>
-      <div class="accseg" role="group" aria-label="Private / Public">
-        <button type="button" data-a="private" aria-pressed="false">🔒 Private</button>
-        <button type="button" data-a="public" aria-pressed="true">🌐 Public</button>
+    <div class="split">
+      <div class="split-list">
+        <h2 class="listhead" id="listHead">Միջոցառումների ցուցակ</h2>
+        <main id="list"></main>
+      </div>
+      <div class="split-cal">
+        <section class="cal" id="cal" aria-label="Օրացույց">
+          <div class="cal-h">
+            <h2 id="calTitle">—</h2>
+            <p class="hint" id="calHint">Սեղմեք օրվա վրա՝ նոր այց ավելացնելու, կամ այցի վրա՝ բացելու համար</p>
+            <div class="cal-nav"><button type="button" id="calPrev" aria-label="Նախորդ ամիս">‹</button><button
+                type="button" id="calToday">Այսօր</button><button type="button" id="calNext"
+                aria-label="Հաջորդ ամիս">›</button></div>
+          </div>
+          <div class="cal-g" id="calGrid"></div>
+        </section>
       </div>
     </div>
-    <label class="only-event">Միջոցառման անվանում<input id="f_ename" placeholder="օր.՝ Կլոր սեղան գինեկոլոգների հետ"></label>
-    <label class="only-event">Կազմակերպություն (ընկերություն)<select id="f_org"></select></label>
-    <label><span id="clinicLbl">Կլինիկա *</span><select id="f_clinic"></select></label>
-    <label class="only-event">Բանախոս<input id="f_speaker" placeholder="Անուն, ազգանուն"></label>
-    <label class="only-visit">Բժիշկներ <span class="hint">ամեն անուն՝ նոր տողից</span><textarea id="f_docs" rows="2"></textarea></label>
-    <div class="field msel-wrap"><span id="testsLbl">Քննարկված թեստեր</span><button type="button" id="f_testsBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button><div id="f_tests" class="msel-pop" role="group" aria-labelledby="testsLbl" hidden></div></div>
 
-    <div class="sec">Արդյունք</div>
-    <label>Թեմա<textarea id="f_topic" rows="2"></textarea></label>
-    <label class="only-visit">Պայմանավորվածություն<textarea id="f_agree" rows="2"></textarea></label>
-    <div class="field msel-wrap only-visit"><span id="objLbl">Առարկություններ</span><button type="button" id="f_objBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button><div id="f_obj" class="msel-pop" role="group" aria-labelledby="objLbl" hidden></div></div>
-    <label>Նշումներ<textarea id="f_notes" rows="2"></textarea></label>
-    <div id="confirmBox" class="confirm" hidden><span id="delQ">Ջնջե՞լ այս այցը։</span> <button type="button" id="yesDel" class="danger">Այո, ջնջել</button><button type="button" id="noDel">Չեղարկել</button></div>
-    <div class="row">
-      <button type="button" id="delBtn" class="danger" hidden>Ջնջել</button>
-      <span></span>
-      <div class="actions"><button type="button" id="cancelBtn">Չեղարկել</button><button type="submit" id="saveBtn" class="primary">Պահպանել</button></div>
-    </div>
-  </form>
-</div>
 
-<div class="overlay" id="listsOverlay" hidden>
-  <div class="panel" role="dialog" aria-labelledby="listsTitle">
-    <div class="row"><h3 id="listsTitle">Ցուցակներ</h3><button type="button" id="listsClose" aria-label="Փակել">✕</button></div>
-    <p class="hint">Այս անունները հայտնվում են այցի ձևում՝ ընտրելու համար։ Փոփոխությունները պահպանվում են անմիջապես։</p>
-    <div id="listsBody" style="display:grid;gap:16px"></div>
-    <button type="button" id="harvestBtn">Ավելացնել միջոցառումներում արդեն օգտագործված անունները</button>
   </div>
-</div>
-<div class="toast" id="toast" hidden></div>
-<script src="mijocarum.js"></script>
-<script>
-/* մենեջերները՝ select-ով */
-(function(){
-  const sel=document.getElementById("repSel");
-  function fill(){
-    const rc={}; visits.forEach(v=>{if(v.rep&&(v.kind||"visit")===PAGE&&status(v)!=="done")rc[v.rep]=(rc[v.rep]||0)+1});
-    const reps=(a=>{const m=new Map(); a.forEach(x=>{const n=String(x||"").replace(/\s+/g," ").trim(); if(n&&!m.has(n.toLowerCase()))m.set(n.toLowerCase(),n)}); return [...m.values()]})([...L("reps"),...visits.map(v=>v.rep)]);
-    sel.innerHTML='<option value="">Բոլոր մենեջերները</option>'+reps.map(r=>`<option value="${esc(r)}"${repF===r?" selected":""}>${esc(r)} (${rc[r]||0})</option>`).join("");
-    document.body.classList.toggle("by-person",!!repF);
-  }
-  const orig=render; render=function(){orig(); fill()};
-  sel.addEventListener("change",()=>{repF=sel.value; render()});
-  fill();
-})();
-</script>
+
+  <div class="overlay" id="overlay" hidden>
+    <form class="panel" id="form" data-kind="visit" novalidate>
+      <div class="row">
+        <h3 id="formTitle">Նոր այց</h3><button type="button" id="closeBtn" aria-label="Փակել">✕</button>
+      </div>
+      <div class="grid3">
+        <label>Ամսաթիվ *<input id="f_date" class="date-in" placeholder="օր.ամիս.տարի" inputmode="numeric"
+            autocomplete="off" required></label>
+        <label>Ժամ<input id="f_time" placeholder="օր.՝ 11:30"></label>
+        <label>Մենեջեր<select id="f_rep"></select></label>
+      </div>
+      <div class="grid2 only-event">
+        <label>Միջոցառման տեսակ *<select id="f_etype"></select></label>
+        <label>Մասնակիցների թիվ<input id="f_part" inputmode="numeric" placeholder="օր.՝ 25"></label>
+      </div>
+      <div class="field only-event"><span>Տեսակ</span>
+        <div class="accseg" role="group" aria-label="Private / Public">
+          <button type="button" data-a="private" aria-pressed="false">🔒 Private</button>
+          <button type="button" data-a="public" aria-pressed="true">🌐 Public</button>
+        </div>
+      </div>
+      <label class="only-event">Միջոցառման անվանում<input id="f_ename"
+          placeholder="օր.՝ Կլոր սեղան գինեկոլոգների հետ"></label>
+      <label class="only-event">Կազմակերպություն (ընկերություն)<select id="f_org"></select></label>
+      <label><span id="clinicLbl">Կլինիկա *</span><select id="f_clinic"></select></label>
+      <label class="only-event">Բանախոս<input id="f_speaker" placeholder="Անուն, ազգանուն"></label>
+      <label class="only-visit">Բժիշկներ <span class="hint">ամեն անուն՝ նոր տողից</span><textarea id="f_docs"
+          rows="2"></textarea></label>
+      <div class="field msel-wrap"><span id="testsLbl">Քննարկված թեստեր</span><button type="button" id="f_testsBtn"
+          class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button>
+        <div id="f_tests" class="msel-pop" role="group" aria-labelledby="testsLbl" hidden></div>
+      </div>
+
+      <div class="sec">Արդյունք</div>
+      <label>Թեմա<textarea id="f_topic" rows="2"></textarea></label>
+      <label class="only-visit">Պայմանավորվածություն<textarea id="f_agree" rows="2"></textarea></label>
+      <div class="field msel-wrap only-visit"><span id="objLbl">Առարկություններ</span><button type="button"
+          id="f_objBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button>
+        <div id="f_obj" class="msel-pop" role="group" aria-labelledby="objLbl" hidden></div>
+      </div>
+      <label>Նշումներ<textarea id="f_notes" rows="2"></textarea></label>
+      <div id="confirmBox" class="confirm" hidden><span id="delQ">Ջնջե՞լ այս այցը։</span> <button type="button"
+          id="yesDel" class="danger">Այո, ջնջել</button><button type="button" id="noDel">Չեղարկել</button></div>
+      <div class="row">
+        <button type="button" id="delBtn" class="danger" hidden>Ջնջել</button>
+        <span></span>
+        <div class="actions"><button type="button" id="cancelBtn">Չեղարկել</button><button type="submit" id="saveBtn"
+            class="primary">Պահպանել</button></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="overlay" id="listsOverlay" hidden>
+    <div class="panel" role="dialog" aria-labelledby="listsTitle">
+      <div class="row">
+        <h3 id="listsTitle">Ցուցակներ</h3><button type="button" id="listsClose" aria-label="Փակել">✕</button>
+      </div>
+      <p class="hint">Այս անունները հայտնվում են այցի ձևում՝ ընտրելու համար։ Փոփոխությունները պահպանվում են անմիջապես։
+      </p>
+      <div id="listsBody" style="display:grid;gap:16px"></div>
+      <button type="button" id="harvestBtn">Ավելացնել միջոցառումներում արդեն օգտագործված անունները</button>
+    </div>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+  <script src="mijocarum.js"></script>
+  <script>
+    /* մենեջերները՝ select-ով */
+    (function () {
+      const sel = document.getElementById("repSel");
+      function fill() {
+        const rc = {}; visits.forEach(v => { if (v.rep && (v.kind || "visit") === PAGE && status(v) !== "done") rc[v.rep] = (rc[v.rep] || 0) + 1 });
+        const reps = (a => { const m = new Map(); a.forEach(x => { const n = String(x || "").replace(/\s+/g, " ").trim(); if (n && !m.has(n.toLowerCase())) m.set(n.toLowerCase(), n) }); return [...m.values()] })([...L("reps"), ...visits.map(v => v.rep)]);
+        sel.innerHTML = '<option value="">Բոլոր մենեջերները</option>' + reps.map(r => `<option value="${esc(r)}"${repF === r ? " selected" : ""}>${esc(r)} (${rc[r] || 0})</option>`).join("");
+        document.body.classList.toggle("by-person", !!repF);
+      }
+      const orig = render; render = function () { orig(); fill() };
+      sel.addEventListener("change", () => { repF = sel.value; render() });
+      fill();
+    })();
+  </script>
 </body>
+
 </html>

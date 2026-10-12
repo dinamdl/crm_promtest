@@ -100,7 +100,8 @@ function docN(v){return docs(v).length||+v.docCount||0}
 function initials(n){return String(n||"?").replace(/[^\p{L}\s]/gu,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2)||"?"}
 function avColor(n){const i=L("reps").indexOf(n); let h=0; for(const c of String(n))h=(h*31+c.charCodeAt(0))>>>0; return AVC[(i>=0?i:h)%AVC.length]}
 function av(n){return `<span class="av" style="background:${avColor(n)}" aria-hidden="true">${esc(initials(n))}</span>`}
-function status(v){ if(v.status==="done")return"done"; const x=d(v.date); if(!x)return"plan"; if(x>TODAY)return"plan"; if(+x===+TODAY)return"today"; return"late"}
+/* ավարտված է, եթե օրն անցել է */
+function status(v){ const x=d(v.date); if(!x)return"plan"; if(x>TODAY)return"plan"; if(+x===+TODAY)return"today"; return"done"}
 function daysBetween(a,b){return Math.round((a-b)/864e5)}
 function stateLabel(v){const s=status(v), x=d(v.date);
   if(s==="done")return"Ավարտված"; if(s==="today")return"Այսօր";
@@ -312,14 +313,14 @@ document.querySelectorAll(".statusseg button").forEach(b=>b.onclick=()=>setStatu
 $("form").addEventListener("submit",async ev=>{
   ev.preventDefault();
   const isE=formKind==="event";
-  const o={kind:formKind,date:parseDMY($("f_date").value),rep:$("f_rep").value,clinic:$("f_clinic").value,tests:MS.tests.get(),status:curStatus};
+  const o={kind:formKind,date:parseDMY($("f_date").value),rep:$("f_rep").value,clinic:$("f_clinic").value,tests:MS.tests.get()};
   for(const [k,el] of Object.entries(TXT))o[k]=$(el).value.trim();
   if(isE){o.etype=$("f_etype").value; o.participants=o.participants.replace(/[^\d]/g,""); delete o.doctors; delete o.agreement}
   else{o.objections=MS.obj.get(); delete o.ename; delete o.speaker; delete o.participants}
   if(o.date===null){toast("Ամսաթիվը գրեք օր.ամիս.տարի ձևով, օր.՝ 15.10.2026");$("f_date").focus();return}
   if(isE?(!o.date||!o.etype):(!o.date||!o.clinic)){toast(isE?"Լրացրեք ամսաթիվը և միջոցառման տեսակը։":"Լրացրեք ամսաթիվը և կլինիկան։");return}
   if(editingId){o.id=editingId; if(!mayEdit(visits.find(e=>e.id===editingId))){toast("Կարող եք խմբագրել միայն ձեր ավելացրածը");return}}
-  try{await saveVisit(o); closeForm(); toast(o.status==="done"?(isE?"Պահպանված է · միջոցառումը ավարտված է":"Պահպանված է · այցը ավարտված է"):"Պահպանված է")}catch(e){toast("Չհաջողվեց պահպանել"+(e.code==="invalid_argument"?"․ խմբագրելու իրավունք չունեք":""))}
+  try{await saveVisit(o); closeForm(); toast("Պահպանված է")}catch(e){toast("Չհաջողվեց պահպանել"+(e.code==="invalid_argument"?"․ խմբագրելու իրավունք չունեք":""))}
 });
 $("delBtn").onclick=()=>$("confirmBox").hidden=false;
 $("noDel").onclick=()=>$("confirmBox").hidden=true;
