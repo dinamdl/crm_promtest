@@ -100,7 +100,8 @@ function docN(v){return docs(v).length||+v.docCount||0}
 function initials(n){return String(n||"?").replace(/[^\p{L}\s]/gu,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2)||"?"}
 function avColor(n){const i=L("reps").indexOf(n); let h=0; for(const c of String(n))h=(h*31+c.charCodeAt(0))>>>0; return AVC[(i>=0?i:h)%AVC.length]}
 function av(n){return `<span class="av" style="background:${avColor(n)}" aria-hidden="true">${esc(initials(n))}</span>`}
-function status(v){ if(v.status==="done")return"done"; const x=d(v.date); if(!x)return"plan"; if(x>TODAY)return"plan"; if(+x===+TODAY)return"today"; return"late"}
+/* միջոցառումը ավարտված է, եթե օրն անցել է */
+function status(v){ const x=d(v.date); if(!x)return"plan"; if(x>TODAY)return"plan"; if(+x===+TODAY)return"today"; return"done"}
 function daysBetween(a,b){return Math.round((a-b)/864e5)}
 function stateLabel(v){const s=status(v), x=d(v.date);
   if(s==="done")return"Ավարտված"; if(s==="today")return"Այսօր";
@@ -120,6 +121,7 @@ function matches(v){
   const q=$("q").value.trim().toLowerCase(), clinic=$("clinicF").value;
   if(repF&&v.rep!==repF)return false;
   if(clinic&&v.clinic!==clinic)return false;
+  const acc=$("accF")?$("accF").value:""; if(acc&&(v.access||"public")!==acc)return false;
   if(q&&![v.clinic,v.rep,v.doctors,v.etype,v.ename,v.speaker,arr(v.tests).join(" "),v.topic,v.agreement,arr(v.objections).join(" "),v.notes].join(" ").toLowerCase().includes(q))return false;
   return true}
 function renderCal(){
@@ -230,7 +232,7 @@ function card(v){
 
 function eventCard(v){
   const s=status(v), x=d(v.date);
-  const chips=`<span class="chip kind">${esc(v.etype||"Միջոցառում")}</span>`+(v.org?`<span class="chip">${esc(v.org)}</span>`:"")+(v.participants?`<span class="chip">${esc(v.participants)} մասնակից</span>`:"")+arr(v.tests).map(t=>`<span class="chip test">${esc(t)}</span>`).join("");
+  const chips=`<span class="chip kind">${esc(v.etype||"Միջոցառում")}</span>`+(v.access==="private"?'<span class="chip acc private">🔒 Private</span>':'<span class="chip acc public">🌐 Public</span>')+(v.org?`<span class="chip">${esc(v.org)}</span>`:"")+(v.participants?`<span class="chip">${esc(v.participants)} մասնակից</span>`:"")+arr(v.tests).map(t=>`<span class="chip test">${esc(t)}</span>`).join("");
   const lbl=s==="late"?"Չի փակվել":stateLabel(v);
   return `<button type="button" class="ev ${s==="done"?"done":""}" data-id="${esc(v.id)}">
     <div class="date"><b>${x?x.getDate():"?"}</b><span>${x?MSHORT[x.getMonth()]+(x.getFullYear()!==TODAY.getFullYear()?"<br>"+x.getFullYear():""):""}${v.time?"<br>"+esc(v.time):""}</span></div>
@@ -286,6 +288,8 @@ document.addEventListener("change",e=>{if(e.target.classList&&e.target.classList
 /* ---------- form ---------- */
 function fillSelect(id,opts,cur){const o=[...opts]; if(cur&&!o.includes(cur))o.unshift(cur);
   $(id).innerHTML=`<option value="" disabled hidden${cur?"":" selected"}>— Ընտրել —</option>`+o.map(v=>`<option value="${esc(v)}"${v===cur?" selected":""}>${esc(v)}</option>`).join("")}
+let curAccess="public";
+function setAccess(a){curAccess=a==="private"?"private":"public"; document.querySelectorAll(".accseg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.a===curAccess)))}
 function setStatus(s){curStatus=s; document.querySelectorAll(".statusseg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.s===s)))}
 const TXT={time:"f_time",doctors:"f_docs",topic:"f_topic",agreement:"f_agree",notes:"f_notes",ename:"f_ename",speaker:"f_speaker",participants:"f_part"};
 let formKind="visit";
@@ -299,9 +303,9 @@ function openForm(id,date){
   $("f_date").value=fmt(v.date); fillSelect("f_rep",L("reps"),v.rep||""); fillSelect("f_clinic",L("clinics"),v.clinic||"");
   for(const [k,el] of Object.entries(TXT))$(el).value=v[k]||"";
   if(!ds_ok(v)&&v.docCount)$("f_docs").placeholder=v.docCount+" բժիշկ (անունները չեն ներմուծվել)"; else $("f_docs").placeholder="";
-  MS.tests.fill(v.tests,ro); MS.obj.fill(v.objections,ro); setStatus(v.status||"open");
+  MS.tests.fill(v.tests,ro); MS.obj.fill(v.objections,ro); setStatus(v.status||"open"); setAccess(v.access);
   ["f_date","f_rep","f_clinic","f_etype","f_org",...Object.values(TXT)].forEach(i=>$(i).disabled=ro);
-  document.querySelectorAll(".statusseg button").forEach(b=>b.disabled=ro);
+  document.querySelectorAll(".statusseg button,.accseg button").forEach(b=>b.disabled=ro);
   $("saveBtn").hidden=ro; $("cancelBtn").textContent=ro?"Փակել":"Չեղարկել";
   $("formTitle").textContent=isE?(!id?"Նոր միջոցառում":ro?"Միջոցառում":"Խմբագրել միջոցառումը"):(!id?"Նոր այց":ro?"Այց":"Խմբագրել այցը");
   $("delBtn").hidden=!id||(mode==="db"&&!canEdit); $("confirmBox").hidden=true; closeAllMsel(); $("overlay").hidden=false; (ro?$("closeBtn"):$(isE?"f_etype":"f_clinic")).focus();
@@ -309,17 +313,18 @@ function openForm(id,date){
 function ds_ok(v){return docs(v).length>0}
 function closeForm(){closeDP(); closeAllMsel(); $("overlay").hidden=true; editingId=null}
 document.querySelectorAll(".statusseg button").forEach(b=>b.onclick=()=>setStatus(b.dataset.s));
+document.querySelectorAll(".accseg button").forEach(b=>b.onclick=()=>setAccess(b.dataset.a));
 $("form").addEventListener("submit",async ev=>{
   ev.preventDefault();
   const isE=formKind==="event";
-  const o={kind:formKind,date:parseDMY($("f_date").value),rep:$("f_rep").value,clinic:$("f_clinic").value,tests:MS.tests.get(),status:curStatus};
+  const o={kind:formKind,date:parseDMY($("f_date").value),rep:$("f_rep").value,clinic:$("f_clinic").value,tests:MS.tests.get()};
   for(const [k,el] of Object.entries(TXT))o[k]=$(el).value.trim();
-  if(isE){o.etype=$("f_etype").value; o.org=$("f_org").value; o.participants=o.participants.replace(/[^\d]/g,""); delete o.doctors; delete o.agreement}
+  if(isE){o.access=curAccess; o.etype=$("f_etype").value; o.org=$("f_org").value; o.participants=o.participants.replace(/[^\d]/g,""); delete o.doctors; delete o.agreement}
   else{o.objections=MS.obj.get(); delete o.ename; delete o.speaker; delete o.participants}
   if(o.date===null){toast("Ամսաթիվը գրեք օր.ամիս.տարի ձևով, օր.՝ 15.10.2026");$("f_date").focus();return}
   if(isE?(!o.date||!o.etype):(!o.date||!o.clinic)){toast(isE?"Լրացրեք ամսաթիվը և միջոցառման տեսակը։":"Լրացրեք ամսաթիվը և կլինիկան։");return}
   if(editingId){o.id=editingId; if(!mayEdit(visits.find(e=>e.id===editingId))){toast("Կարող եք խմբագրել միայն ձեր ավելացրածը");return}}
-  try{await saveVisit(o); closeForm(); toast(o.status==="done"?(isE?"Պահպանված է · միջոցառումը ավարտված է":"Պահպանված է · այցը ավարտված է"):"Պահպանված է")}catch(e){toast("Չհաջողվեց պահպանել"+(e.code==="invalid_argument"?"․ խմբագրելու իրավունք չունեք":""))}
+  try{await saveVisit(o); closeForm(); toast("Պահպանված է")}catch(e){toast("Չհաջողվեց պահպանել"+(e.code==="invalid_argument"?"․ խմբագրելու իրավունք չունեք":""))}
 });
 $("delBtn").onclick=()=>$("confirmBox").hidden=false;
 $("noDel").onclick=()=>$("confirmBox").hidden=true;
@@ -330,7 +335,7 @@ document.addEventListener("keydown",e=>{if(e.key!=="Escape")return; if(dp){close
 $("addBtn").onclick=()=>openForm();
 $("list").addEventListener("click",e=>{const b=e.target.closest(".ev"); if(b)openForm(b.dataset.id)});
 $("reps").addEventListener("click",e=>{const b=e.target.closest(".rep"); if(!b)return; repF=b.dataset.r; render()});
-$("q").addEventListener("input",render); $("clinicF").addEventListener("change",render);
+$("q").addEventListener("input",render); $("clinicF").addEventListener("change",render); if($("accF"))$("accF").addEventListener("change",render);
 document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{filter=b.dataset.f; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); render()});
 
 /* ---------- lists manager ---------- */

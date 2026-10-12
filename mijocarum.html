@@ -39,6 +39,7 @@
       <button type="button" data-f="all" aria-pressed="false">Բոլորը</button>
     </div>
     <select id="repSel" aria-label="Մենեջեր"><option value="">Բոլոր մենեջերները</option></select>
+    <select id="accF" aria-label="Private / Public"><option value="">Private և Public</option><option value="private">🔒 Private</option><option value="public">🌐 Public</option></select>
     <select id="clinicF" aria-label="Կլինիկա"><option value="">Բոլոր կլինիկաները</option></select>
   </div>
 
@@ -74,6 +75,12 @@
       <label>Միջոցառման տեսակ *<select id="f_etype"></select></label>
       <label>Մասնակիցների թիվ<input id="f_part" inputmode="numeric" placeholder="օր.՝ 25"></label>
     </div>
+    <div class="field only-event"><span>Տեսակ</span>
+      <div class="accseg" role="group" aria-label="Private / Public">
+        <button type="button" data-a="private" aria-pressed="false">🔒 Private</button>
+        <button type="button" data-a="public" aria-pressed="true">🌐 Public</button>
+      </div>
+    </div>
     <label class="only-event">Միջոցառման անվանում<input id="f_ename" placeholder="օր.՝ Կլոր սեղան գինեկոլոգների հետ"></label>
     <label class="only-event">Կազմակերպություն (ընկերություն)<select id="f_org"></select></label>
     <label><span id="clinicLbl">Կլինիկա *</span><select id="f_clinic"></select></label>
@@ -86,12 +93,6 @@
     <label class="only-visit">Պայմանավորվածություն<textarea id="f_agree" rows="2"></textarea></label>
     <div class="field msel-wrap only-visit"><span id="objLbl">Առարկություններ</span><button type="button" id="f_objBtn" class="msel-btn ph" aria-haspopup="true" aria-expanded="false">— Ընտրել —</button><div id="f_obj" class="msel-pop" role="group" aria-labelledby="objLbl" hidden></div></div>
     <label>Նշումներ<textarea id="f_notes" rows="2"></textarea></label>
-    <div class="field"><span>Կարգավիճակ</span>
-      <div class="statusseg" role="group" aria-label="Կարգավիճակ">
-        <button type="button" data-s="open" aria-pressed="true">Բաց</button>
-        <button type="button" data-s="done" aria-pressed="false">Ավարտված</button>
-      </div>
-    </div>
     <div id="confirmBox" class="confirm" hidden><span id="delQ">Ջնջե՞լ այս այցը։</span> <button type="button" id="yesDel" class="danger">Այո, ջնջել</button><button type="button" id="noDel">Չեղարկել</button></div>
     <div class="row">
       <button type="button" id="delBtn" class="danger" hidden>Ջնջել</button>

@@ -199,3 +199,11 @@ select option{color:var(--ink)}
 .ren-form{display:inline-flex;gap:4px;align-items:center}
 .ren-form input{width:170px;padding:3px 8px;font-size:13px}
 .ren-form button{padding:2px 8px;font-size:12px;border-radius:999px}
+
+/* Private / Public */
+.accseg{display:flex;flex-wrap:wrap;gap:6px}
+.accseg button{padding:6px 12px;font-size:13px}
+.accseg button[aria-pressed=true][data-a=private]{background:#f3e8ff;color:#765999;border-color:transparent;font-weight:600}
+.accseg button[aria-pressed=true][data-a=public]{background:var(--ok-soft);color:var(--ok);border-color:transparent;font-weight:600}
+.chip.acc.private{background:#f3e8ff;color:#765999;border-color:transparent;font-weight:500}
+.chip.acc.public{background:var(--ok-soft);color:var(--ok);border-color:transparent;font-weight:500}
